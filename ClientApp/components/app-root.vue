@@ -1,29 +1,37 @@
 <template>
-    <div id="app" class="container-fluid">
-        <div class="row">
-            <div class="col-md-3">
-                <nav-menu params="route: route"></nav-menu>
-            </div>
-            <div class="col-sm-9">
-                <router-view></router-view>
-            </div>
-        </div>
-    </div>
+  <v-app>
+    <nav-menu :drawer="drawer"></nav-menu>
+    <v-toolbar app fixed clipped-left>
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-title>Application</v-toolbar-title>
+    </v-toolbar>
+
+    <v-content>
+      <v-container fluid>
+        <v-layout wrap>
+          <v-flex>
+            <router-view></router-view>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-content>
+    <v-footer app fixed>
+      <span>&copy; 2017</span>
+    </v-footer>
+  </v-app>
 </template>
-
 <script>
-    import NavMenu from './nav-menu'
+  import NavMenu from './nav-menu'
 
-    export default {
-      components: {
-        'nav-menu': NavMenu
-      },
+  export default {
+    components: {
+      'nav-menu': NavMenu
+    },
 
-      data () {
-        return {}
-      }
-    }
+    data: () => ({
+      drawer: true
+    }),
+  }
 </script>
-
 <style>
 </style>
