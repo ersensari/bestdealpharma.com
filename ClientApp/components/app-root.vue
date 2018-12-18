@@ -1,14 +1,31 @@
 <template>
   <v-app>
     <nav-menu :drawer="drawer"></nav-menu>
-    <v-toolbar app fixed clipped-left>
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title>Application</v-toolbar-title>
-    </v-toolbar>
-
     <v-content>
-      <v-container fluid>
-        <v-layout wrap>
+      <v-container>
+        <v-layout>
+          <v-flex>
+            <v-img src="images/logo.png" width="240" />
+          </v-flex>
+        </v-layout>
+      </v-container>
+      <v-container>
+        <v-layout>
+          <v-flex>
+            <v-toolbar>
+              <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+              <v-spacer></v-spacer>
+              <v-toolbar-items class="hidden-sm-and-down">
+                <v-btn flat>Link One</v-btn>
+                <v-btn flat>Link Two</v-btn>
+                <v-btn flat>Link Three</v-btn>
+              </v-toolbar-items>
+            </v-toolbar>
+          </v-flex>
+        </v-layout>
+      </v-container>
+      <v-container>
+        <v-layout>
           <v-flex>
             <router-view></router-view>
           </v-flex>
@@ -29,7 +46,7 @@
     },
 
     data: () => ({
-      drawer: true
+      drawer: null
     }),
   }
 </script>

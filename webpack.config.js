@@ -32,7 +32,7 @@ module.exports = () => {
           'views': path.resolve(__dirname, './ClientApp/views'),
           'utils': path.resolve(__dirname, './ClientApp/utils'),
           'api': path.resolve(__dirname, './ClientApp/store/api')
-        }
+          }
     },
     output: {
       path: path.join(__dirname, bundleOutputDir),
@@ -41,7 +41,7 @@ module.exports = () => {
     },
     module: {
       rules: [
-        { test: /\.vue$/, use: 'vue-loader'},
+        { test: /\.vue$/, use: 'vue-loader' },
         { test: /\.js$/, use: 'babel-loader', exclude: /node_modules/ },
         { test: /\.css$/, use: isDevBuild ? ['style-loader', 'css-loader'] : ExtractTextPlugin.extract({ use: 'css-loader' }) },
         { test: /\.styl(us)?$/, use: ['vue-style-loader', 'css-loader', 'stylus-loader'] },

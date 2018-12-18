@@ -18,6 +18,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\images\logo.png" />
+  </ItemGroup>
 
   <Target Name="RunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->

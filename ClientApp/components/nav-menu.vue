@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer clipped fixed app v-model="drawer">
+  <v-navigation-drawer absolute temporary v-model="collapse">
     <v-list dense>
       <v-list-tile v-for="(route, index) in routes" :key="index" :href="route.path">
         <v-list-tile-action>
@@ -13,25 +13,20 @@
       </v-list-tile>
     </v-list>
   </v-navigation-drawer>
-
 </template>
 <script>
   import { routes } from '../router/routes'
 
   export default {
-    props: {
-      drawer: true
-    },
+    props: ['drawer'],
     data() {
       return {
         routes,
-        collapsed: true
+        collapse: null
       }
     },
-    methods: {
-      toggleCollapsed: function (event) {
-        this.collapsed = !this.collapsed
-      }
+    watch: {
+      drawer(val) { this.collapse = val }
     }
   }
 </script>

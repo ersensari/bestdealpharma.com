@@ -128,7 +128,6 @@ export default {
 
 
 <style lang="stylus">
-// @import '../../node_modules/vuetify/src/stylus/settings/_elevations.styl';
 
 #appDrawer
   overflow: hidden
