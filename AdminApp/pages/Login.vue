@@ -9,9 +9,9 @@
                 <div class="layout column align-center">
                   <img src="/images/logo.png" alt="bestdealpharma.com" width="240">
                   <h1 class="flex my-4 primary--text">Management Panel</h1>
-                </div>                
+                </div>
                 <v-form>
-                  <v-text-field append-icon="person" name="login" label="Email" type="text" v-model="model.username"></v-text-field>
+                  <v-text-field append-icon="person" name="login" label="Email" type="text" v-model="model.email"></v-text-field>
                   <v-text-field append-icon="lock" name="password" label="Password" id="password" type="password" v-model="model.password"></v-text-field>
                 </v-form>
               </v-card-text>
@@ -28,25 +28,36 @@
 </template>
 
 <script>
-export default {
-  data: () => ({
-    loading: false,
-    model: {
-      username: null,
-      password: null
-    }
-  }),
+  import Axios from 'Axios'
 
-  methods: {
-    login () {
-      this.loading = true;
-      setTimeout(() => {
-        this.$router.push('/dashboard');
-      }, 1000);
-    }
-  }
+  export default {
+    data: () => ({
+      loading: false,
+      model: {
+        email: null,
+        password: null
+      }
+    }),
 
-};
+    methods: {
+      login() {
+        this.loading = true;
+        Axios.post("/account/login", JSON.stringify(this.model), {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }).then(
+          response => {
+            window.location.href = "/account/protected"
+          }
+        ).catch(err => {
+          this.loading = false
+          console.log(err)
+        })
+      }
+    }
+
+  };
 </script>
 <style scoped lang="css">
   #login {

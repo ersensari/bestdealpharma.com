@@ -32,7 +32,7 @@ module.exports = () => {
           'views': path.resolve(__dirname, './ClientApp/views'),
           'utils': path.resolve(__dirname, './ClientApp/utils'),
           'api': path.resolve(__dirname, './ClientApp/store/api')
-          }
+        }
     },
     output: {
       path: path.join(__dirname, bundleOutputDir),
