@@ -14,7 +14,8 @@
           <v-footer height="auto" class="white pa-3 app--footer">
             <span class="caption">bestdealpharma.com &copy; {{ new Date().getFullYear() }}</span>
             <v-spacer></v-spacer>
-            <span class="caption mr-1"> Make With Love </span> <v-icon color="pink" small>favorite</v-icon>
+            <span class="caption mr-1"> Make With Love </span>
+            <v-icon color="pink" small>favorite</v-icon>
           </v-footer>
         </v-content>
         <!-- Go to top -->
@@ -41,11 +42,7 @@
         </keep-alive>
       </transition>
     </template>
-    <v-snackbar :timeout="3000"
-                bottom
-                right
-                :color="snackbar.color"
-                v-model="snackbar.show">
+    <v-snackbar :timeout="3000" bottom right :color="snackbar.color" v-model="snackbar.show">
       {{ snackbar.text }}
       <v-btn dark flat @click.native="snackbar.show = false" icon>
         <v-icon>close</v-icon>
@@ -102,11 +99,7 @@
 
 <style lang="stylus" scoped>
   .setting-fab
-    top:50%!important
-    right:0
-    border-radius:0
-
-  .page-wrapper
-    min-height:calc(100vh - 64px - 50px - 81px )
-
+    top:50% !important right:0 border-radius:0
+    .page-wrapper
+      min-height:calc(100vh - 64px - 50px - 81px)
 </style>

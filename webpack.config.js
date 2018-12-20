@@ -25,14 +25,16 @@ module.exports = () => {
         'components': path.resolve(__dirname, './ClientApp/components'),
         'views': path.resolve(__dirname, './ClientApp/views'),
         'utils': path.resolve(__dirname, './ClientApp/utils'),
-        'api': path.resolve(__dirname, './ClientApp/store/api')
+        'api': path.resolve(__dirname, './ClientApp/store/api'),
+        'plugins': path.resolve(__dirname, './plugins')
       } : {
-          '@': path.resolve(__dirname, './AdminApp'),
-          'components': path.resolve(__dirname, './ClientApp/components'),
-          'views': path.resolve(__dirname, './ClientApp/views'),
-          'utils': path.resolve(__dirname, './ClientApp/utils'),
-          'api': path.resolve(__dirname, './ClientApp/store/api')
-        }
+        '@': path.resolve(__dirname, './AdminApp'),
+        'components': path.resolve(__dirname, './ClientApp/components'),
+        'views': path.resolve(__dirname, './ClientApp/views'),
+        'utils': path.resolve(__dirname, './ClientApp/utils'),
+        'api': path.resolve(__dirname, './ClientApp/store/api'),
+        'plugins': path.resolve(__dirname, './plugins')
+      }
     },
     output: {
       path: path.join(__dirname, bundleOutputDir),
@@ -62,15 +64,15 @@ module.exports = () => {
         moduleFilenameTemplate: path.relative(bundleOutputDir, '[resourcePath]') // Point sourcemap entries to the original file locations on disk
       })
     ] : [
-        // Plugins that apply in production builds only
-        new webpack.optimize.UglifyJsPlugin(),
-        extractCSS,
-        // Compress extracted CSS.
-        new OptimizeCSSPlugin({
-          cssProcessorOptions: {
-            safe: true
-          }
-        })
-      ])
+      // Plugins that apply in production builds only
+      new webpack.optimize.UglifyJsPlugin(),
+      extractCSS,
+      // Compress extracted CSS.
+      new OptimizeCSSPlugin({
+        cssProcessorOptions: {
+          safe: true
+        }
+      })
+    ])
   }]
 }

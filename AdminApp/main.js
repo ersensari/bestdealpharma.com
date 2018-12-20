@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import Vue from 'vue'
 import App from './App'
 import Vuetify from 'vuetify'
@@ -6,8 +7,12 @@ import 'font-awesome/css/font-awesome.css'
 import './theme/default.styl'
 import VeeValidate from 'vee-validate'
 import Truncate from 'lodash.truncate'
+import axios from 'plugins/axios'
+
+const _JWT_COOKIE_NAME = 'bestdealpharma.com.Security.Cookie'
 
 Vue.config.productionTip = false
+
 // Helpers
 // Global filters
 Vue.filter('truncate', Truncate)
@@ -27,6 +32,8 @@ Vue.use(Vuetify, {
     }
   }
 })
+
+Vue.use(axios, { tokenCookieName: _JWT_COOKIE_NAME })
 
 /* eslint-disable no-new */
 new Vue({
