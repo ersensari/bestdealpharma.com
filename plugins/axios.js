@@ -1,8 +1,7 @@
 'use strict'
 import axios from 'axios'
-import { getCookie } from '@/util/index'
 export default {
-  install (Vue, options) {
+  install(Vue) {
     // Full config:  https://github.com/axios/axios#request-config
     // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
     // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -16,39 +15,40 @@ export default {
     const _axios = axios.create(config)
 
     _axios.interceptors.request.use((config) => {
-      if (getCookie(options.tokenCookieName)) {
-        config.headers.set('Authorization', 'Bearer ' + getCookie(options.tokenCookieName))
+      if (window.localStorage.getItem('token')) {
+        config.headers['Authorization'] = 'Bearer ' + window.localStorage.getItem('token')
       }
+
       return config
     },
-    (error) => {
-      // Do something with request error
-      return Promise.reject(error)
-    }
+      (error) => {
+        // Do something with request error
+        return Promise.reject(error)
+      }
     )
 
-    // // Add a response interceptor
-    // _axios.interceptors.response.use(
-    //   function (response) {
-    //     // Do something with response data
-    //     return response
-    //   },
-    //   function (error) {
-    //     // Do something with response error
-    //     return Promise.reject(error)
-    //   }
-    // )
+    // Add a response interceptor
+    _axios.interceptors.response.use(
+      function (response) {
+        // Do something with response data
+        return response
+      },
+      function (error) {
+        // Do something with response error
+        return Promise.reject(error)
+      }
+    )
 
     Vue.axios = _axios
     window.axios = _axios
     Object.defineProperties(Vue.prototype, {
       axios: {
-        get () {
+        get() {
           return _axios
         }
       },
       $axios: {
-        get () {
+        get() {
           return _axios
         }
       }

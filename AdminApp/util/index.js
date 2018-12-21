@@ -1,48 +1,6 @@
 
-// export function camel (str) {
-//   const camel = (str || '').replace(/-([^-])/g, g => g[1].toUpperCase());
+var CryptoJS = require('crypto-js')
 
-//   return capitalize(camel);
-// }
-
-// export function camelActual (str) {
-//   return (str || '').replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : ''));
-// }
-
-// export function kebab (str) {
-//   return (str || '').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-// }
-
-// export function capitalize (str) {
-//   str = str || '';
-
-//   return `${str.substr(0, 1).toUpperCase()}${str.slice(1)}`;
-// }
-
-// export function findProduct (store, id) {
-//   return store.state.store.products.find(p => p.id === id);
-// }
-
-// export function isOnSale (variants) {
-//   return variants.some(variant => {
-//     return parseFloat(variant.price) < parseFloat(variant.compareAtPrice);
-//   });
-// }
-
-// export function randomNumber (min, max) {
-//   return Math.floor(Math.random() * max) + min;
-// }
-
-// export function randomString (length = 5) {
-//   let text = '';
-//   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-//   for (let i = 0; i < length; i++) {
-//     text += possible.charAt(Math.floor(Math.random() * possible.length));
-//   }
-
-//   return text;
-// }
 const randomElement = (arr = []) => {
   return arr[Math.floor(Math.random() * arr.length)]
 }
@@ -65,27 +23,44 @@ const toggleFullScreen = () => {
   }
 }
 
-export default {
-  randomElement,
-  toggleFullScreen,
-  kebab
-}
-
-export function getCookie (name) {
+const getCookie = (name) => {
   // eslint-disable-next-line one-var
   var arr, reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
   if (arr = document.cookie.match(reg)) { return (arr[2]) } else { return null }
 }
 
-export function setCookie (cName, value, expiredays) {
+const setCookie = (cName, value, expiredays) => {
   var exdate = new Date()
   exdate.setDate(exdate.getDate() + expiredays)
   document.cookie = cName + '=' + escape(value) + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
-};
+}
 
-export function delCookie (name) {
+const delCookie = (name) => {
   var exp = new Date()
   exp.setTime(exp.getTime() - 1)
   var cval = getCookie(name)
   if (cval != null) { document.cookie = name + '=' + cval + ';expires=' + exp.toGMTString() }
-};
+}
+
+const secretKey = '60EFA649C72C4118A989E3CE6D795579'
+const encrypt = (obj) => {
+  var ciphertext = CryptoJS.AES.encrypt(JSON.stringify(obj), secretKey)
+  return ciphertext
+}
+
+const decrypt = (ciphertext) => {
+  var bytes = CryptoJS.AES.decrypt(ciphertext.toString(), secretKey)
+  var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+  return decryptedData
+}
+
+export default {
+  randomElement,
+  toggleFullScreen,
+  kebab,
+  getCookie,
+  setCookie,
+  delCookie,
+  encrypt,
+  decrypt
+}

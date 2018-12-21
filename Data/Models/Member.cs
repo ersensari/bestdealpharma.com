@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace bestdealpharma.com.Data.Models
   public class Member
   {
     public Person Person { get; set; }
-    public ApplicationUser User { get; set; }
+    public IdentityUser User { get; set; }
     public IEnumerable<IdentityRole> Roles { get; set; }
   }
 }

@@ -19,17 +19,25 @@ namespace bestdealpharma.com.Controllers
   {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
+
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IConfiguration _configuration;
+
+    private readonly Providers.IAuthenticatedPersonProvider _authPerson;
 
     public AccountController(
         UserManager<IdentityUser> userManager,
         SignInManager<IdentityUser> signInManager,
-        IConfiguration configuration
+        RoleManager<IdentityRole> roleManager,
+        IConfiguration configuration,
+        Providers.IAuthenticatedPersonProvider authPerson
         )
     {
       _userManager = userManager;
       _signInManager = signInManager;
+      _roleManager = roleManager;
       _configuration = configuration;
+      _authPerson = authPerson;
     }
 
     [HttpPost]
@@ -37,16 +45,34 @@ namespace bestdealpharma.com.Controllers
     [HttpPost]
     public async Task<IActionResult> Login([FromBody]UserModel login)
     {
+      if (!_roleManager.Roles.Any(x => x.Name == "Admin"))
+        await _roleManager.CreateAsync(new IdentityRole("Admin"));
+
+      if (!_roleManager.Roles.Any(x => x.Name == "Editor"))
+        await _roleManager.CreateAsync(new IdentityRole("Editor"));
+
+      if (!_roleManager.Roles.Any(x => x.Name == "Call_Center"))
+        await _roleManager.CreateAsync(new IdentityRole("Call_Center"));
+
+
       IActionResult response = Unauthorized();
       var user = await AuthenticateUserAsync(login);
 
       if (user != null)
       {
         var tokenString = GenerateJSONWebToken(user);
-        response = Ok(new { token = tokenString });
+        response = Ok(new { token = tokenString, user = _authPerson.GetAuthenticatedUser(user.Email), returnUrl = login.forAdminPanel.GetValueOrDefault() ? "/admin" : "/" });
       }
 
       return response;
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+      await _signInManager.SignOutAsync();
+      return RedirectToAction("index", "home");
     }
 
     private async Task<UserModel> AuthenticateUserAsync(UserModel model)
@@ -85,12 +111,6 @@ namespace bestdealpharma.com.Controllers
     //  throw new ApplicationException("UNKNOWN_ERROR");
     //}
 
-    [Authorize]
-    [HttpGet]
-    public async Task<object> Protected()
-    {
-      return "Protected area";
-    }
 
     private string GenerateJSONWebToken(UserModel userInfo)
     {
@@ -118,6 +138,7 @@ namespace bestdealpharma.com.Controllers
       [Required]
       public string Password { get; set; }
 
+      public bool? forAdminPanel { get; set; }
     }
 
     public class RegisterDto

@@ -67,7 +67,11 @@ export default [
   },
   {
     path: '/dashboard',
-    meta: { breadcrumb: true },
+    meta: {
+      breadcrumb: true,
+      requiresAuth: true,
+      is_admin: true
+    },
     name: 'Dashboard',
     component: () => import(
       /* webpackChunkName: "routes" */

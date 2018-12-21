@@ -13,13 +13,12 @@
                 <v-form>
                   <v-text-field append-icon="person" name="login" label="Email" type="text" v-model="model.email"></v-text-field>
                   <v-text-field append-icon="lock" name="password" label="Password" id="password" type="password"
-                    v-model="model.password"></v-text-field>
+                                v-model="model.password"></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" @click="login" :loading="loading">Login</v-btn>
-                <v-btn color="info" @click="getToken" :loading="loading">Get Token</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -35,12 +34,14 @@
       loading: false,
       model: {
         email: null,
-        password: null
+        password: null,
+        forAdminPanel: true
       }
     }),
 
     methods: {
       login() {
+        var self = this
         this.loading = true
         this.axios.post("/account/login", JSON.stringify(this.model), {
           headers: {
@@ -48,23 +49,14 @@
           }
         }).then(
           response => {
-            window.location.href = "/account/protected"
+            self.$myLocalStorage.setEnc('user', response.data.user)
+            window.localStorage.setItem('token', response.data.token)
+            window.location.href = response.data.returnUrl
           }
         ).catch(err => {
           this.loading = false
           console.log(err)
         })
-      },
-      getToken() {
-        this.loading = true
-        this.axios.get("/account/protected").then(response => {
-          console.log(response)
-          this.loading = false
-        }).catch(err => {
-          console.error(err)
-          this.loading = false
-        })
-
       }
     }
   }
@@ -79,5 +71,4 @@
     content: "";
     z-index: 0;
   }
-
 </style>

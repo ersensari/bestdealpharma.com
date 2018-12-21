@@ -19,6 +19,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="wwwroot\images\error\403.svg" />
+    <None Include="wwwroot\images\error\404.svg" />
+    <None Include="wwwroot\images\error\500.svg" />
     <None Include="wwwroot\images\logo.png" />
   </ItemGroup>
 

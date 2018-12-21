@@ -57,7 +57,7 @@ namespace bestdealpharma.com
 
       services.AddAuthorization(options =>
       {
-        options.AddPolicy("AllRoles", policy =>
+        options.AddPolicy("OnlyAdminRights", policy =>
                policy.RequireRole("Admin", "Editor", "Call_Center"));
       });
 
@@ -70,6 +70,13 @@ namespace bestdealpharma.com
 
       // Simple example with dependency injection for a data provider.
       services.AddSingleton<Providers.IWeatherProvider, Providers.WeatherProviderFake>();
+      services.AddScoped<Providers.IAuthenticatedPersonProvider, Providers.AuthenticatedPersonProvider>((ctx) =>
+      {
+        var datacontext = ctx.GetService<Data.DbContext>();
+        var _httpContextAccessor = ctx.GetService<IHttpContextAccessor>();
+
+        return new Providers.AuthenticatedPersonProvider(datacontext, _httpContextAccessor);
+      });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

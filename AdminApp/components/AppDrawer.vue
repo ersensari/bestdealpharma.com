@@ -3,16 +3,12 @@
     id="appDrawer"
     :mini-variant.sync="mini"
     fixed
-    :dark="$vuetify.dark"
     app
     v-model="drawer"
     width="260"
     >
-    <v-toolbar color="primary darken-1" dark>
-      <img v-bind:src="computeLogo" height="36" alt="Vue Material Admin Template">
-      <v-toolbar-title class="ml-0 pl-3">
-        <span class="hidden-sm-and-down">Vue Material</span>
-      </v-toolbar-title>        
+    <v-toolbar color="primary">
+      <img v-bind:src="computeLogo" height="36" title="Best Deal Pharma Management Panel" alt="Best Deal Pharma Management Panel">
     </v-toolbar>
     <vue-perfect-scrollbar class="drawer-menu--scroll" :settings="scrollSettings">
       <v-list dense expand>
@@ -98,7 +94,7 @@ export default {
       return true;
     },
     computeLogo () {
-      return '/static/m.png';
+      return '/images/panel-logo.png';
     },
 
     sideToolbarColor () {
