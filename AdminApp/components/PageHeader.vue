@@ -8,7 +8,7 @@
     </v-breadcrumbs>
     <v-spacer></v-spacer>
     <div class="page-header-right">
-      <v-btn icon>
+      <v-btn icon @click="$router.go($router.history && $router.history.current)">
         <v-icon class="text--secondary">refresh</v-icon>
       </v-btn>
     </div>

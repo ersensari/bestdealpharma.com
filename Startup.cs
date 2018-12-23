@@ -107,6 +107,10 @@ namespace bestdealpharma.com
                   name: "default",
                   template: "{controller=Home}/{action=Index}/{id?}");
 
+        routes.MapRoute(
+                  name: "api",
+                  template: "api/{controlle}/{action}/{id?}");
+
         routes.MapSpaFallbackRoute(
                   name: "spa-fallback",
                   defaults: new { controller = "Home", action = "Index" });

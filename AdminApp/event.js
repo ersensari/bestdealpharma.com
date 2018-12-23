@@ -1,16 +1,13 @@
 
 export default [
+
   {
     name: 'APP_LOGOUT',
     callback: function (e) {
       this.axios.post('/account/logout').then(response => {
         window.localStorage.removeItem('user')
         window.localStorage.removeItem('token')
-        this.snackbar = {
-          show: true,
-          color: 'green',
-          text: 'Logout successfully.'
-        }
+        this.$toastr('success', 'Logout successfully')
         this.$router.replace({ path: '/login' })
       })
     }

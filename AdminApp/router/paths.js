@@ -78,5 +78,33 @@ export default [
       /*  webpackMode: "eager", */
       `@/pages/Dashboard.vue`
     )
+  },
+  {
+    path: '/links',
+    component: () => import(
+      /* webpackChunkName: "routes" */
+      /*  webpackMode: "eager", */
+      `@/pages/Links.vue`
+    ),
+    meta: {
+      breadcrumb: true,
+      requiresAuth: true,
+      is_admin: true
+    },
+    name: 'Links'
+  },
+  {
+    path: '/pages',
+    component: () => import(
+      /* webpackChunkName: "routes" */
+      /*  webpackMode: "eager", */
+      `@/pages/Pages.vue`
+    ),
+    meta: {
+      breadcrumb: true,
+      requiresAuth: true,
+      is_admin: true
+    },
+    name: 'Pages'
   }
 ]

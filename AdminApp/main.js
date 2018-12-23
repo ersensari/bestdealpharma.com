@@ -9,20 +9,49 @@ import 'font-awesome/css/font-awesome.css'
 import './theme/default.styl'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
-import VeeValidate from 'vee-validate'
 import Truncate from 'lodash.truncate'
 import axios from 'plugins/axios'
 import myLocalStorage from 'plugins/myLocalStorage'
 import store from '@store'
 
+import VuejsDialog from 'vuejs-dialog'
+import VuetifyConfirm from 'vuetify-confirm'
+import VueToastr from '@deveodk/vue-toastr'
+import '@deveodk/vue-toastr/dist/@deveodk/vue-toastr.css'
+
 // import colors from 'vuetify/es5/util/colors'
+
+Vue.use(VuejsDialog, {
+  html: true,
+  loader: true,
+  okText: 'Ok',
+  cancelText: 'Cancal',
+  animation: 'bounce'
+})
+
+Vue.use(VuetifyConfirm, {
+  buttonTrueText: 'OK',
+  buttonFalseText: 'CANCEL',
+  color: 'warning',
+  icon: 'warning',
+  title: 'Warning',
+  width: 300,
+  property: '$confirm'
+})
+
+Vue.use(VueToastr, {
+  defaultPosition: 'toast-bottom-right',
+  defaultType: 'info',
+  defaultTimeout: 3000
+});
+
 
 Vue.config.productionTip = false
 
 // Helpers
 // Global filters
 Vue.filter('truncate', Truncate)
-Vue.use(VeeValidate, { fieldsBagName: 'formFields' })
+
 Vue.use(Vuetify, {
   options: {
     // themeVariations: ['primary', 'secondary', 'accent'],

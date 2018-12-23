@@ -1,22 +1,25 @@
 const Menu = [
+  { header: 'Apps' },
   {
     title: 'Dashboard',
-    group: 'apps',
     icon: 'dashboard',
     name: 'Dashboard'
   },
   { divider: true },
   {
-    title: 'Pages',
-    group: 'widgets',
+    title: 'Page Management',
     icon: 'widgets',
     name: 'Pages',
     items: [
-      { name: 'Links', title: 'Links', component: 'components/social' },
-      { name: 'statistic', title: 'Statistic', badge: 'new', component: 'components/statistic' },
-      { name: 'chart', title: 'Chart', component: 'components/chart' },
-      { name: 'list', title: 'List', component: 'components/widget-list' }
+      { name: 'Links', title: 'Links', component: 'Links' },
+      { name: 'Pages', title: 'Pages', component: 'Pages' }
     ]
+  },
+  { divider: true },
+  {
+    title: 'Settings',
+    icon: 'settings',
+    name: 'Settings'
   },
   { divider: true },
   {

@@ -29,12 +29,6 @@
         </keep-alive>
       </transition>
     </template>
-    <v-snackbar :timeout="3000" bottom right :color="snackbar.color" v-model="snackbar.show">
-      {{ snackbar.text }}
-      <v-btn dark flat @click.native="snackbar.show = false" icon>
-        <v-icon>close</v-icon>
-      </v-btn>
-    </v-snackbar>
   </div>
 </template>
 <script>
@@ -44,6 +38,9 @@
   import PageHeader from '@/components/PageHeader';
   import menu from '@/api/menu';
   import AppEvents from './event';
+
+  import { mapState } from 'vuex'
+
   export default {
     components: {
       AppDrawer,
@@ -53,16 +50,13 @@
     },
     data: () => ({
       expanded: true,
-      rightDrawer: false,
-      snackbar: {
-        show: false,
-        text: '',
-        color: '',
-      }
+      rightDrawer: false
     }),
 
     computed: {
-
+      ...mapState({
+        snackbar: state => state.snackbar.data
+      })
     },
 
     created() {
@@ -80,8 +74,9 @@
 
 
 <style lang="stylus" scoped>
+
   .setting-fab
     top:50% !important right:0 border-radius:0
-    .page-wrapper
-      min-height:calc(100vh - 64px - 50px - 81px)
+      .page-wrapper
+        min-height:calc(100vh - 64px - 50px - 81px)
 </style>

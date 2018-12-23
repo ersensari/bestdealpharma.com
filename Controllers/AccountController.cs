@@ -45,6 +45,7 @@ namespace bestdealpharma.com.Controllers
     [HttpPost]
     public async Task<IActionResult> Login([FromBody]UserModel login)
     {
+
       if (!_roleManager.Roles.Any(x => x.Name == "Admin"))
         await _roleManager.CreateAsync(new IdentityRole("Admin"));
 

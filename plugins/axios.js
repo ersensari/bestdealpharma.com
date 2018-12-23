@@ -1,5 +1,6 @@
 'use strict'
 import axios from 'axios'
+
 export default {
   install(Vue) {
     // Full config:  https://github.com/axios/axios#request-config
@@ -11,7 +12,6 @@ export default {
       // timeout: 60 * 1000, // Timeout
       // withCredentials: true, // Check cross-site Access-Control
     }
-
     const _axios = axios.create(config)
 
     _axios.interceptors.request.use((config) => {
@@ -30,7 +30,6 @@ export default {
     // Add a response interceptor
     _axios.interceptors.response.use(
       function (response) {
-        // Do something with response data
         return response
       },
       function (error) {
