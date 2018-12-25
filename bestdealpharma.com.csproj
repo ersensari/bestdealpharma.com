@@ -24,10 +24,6 @@
     <None Include="wwwroot\images\error\500.svg" />
     <None Include="wwwroot\images\logo.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AdminApp\components\link\" />
-    <Folder Include="AdminApp\components\page\" />
-  </ItemGroup>
 
   <Target Name="RunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->

@@ -3,9 +3,7 @@ const apiPath = 'api/pages/'
 
 const state = {
   all: [],
-  errors: [],
-  selected: null,
-  isNew: false
+  errors: []
 }
 
 const getters = {}
@@ -15,102 +13,101 @@ const mutations = {
     state.all = items
   },
   updateItem(state, item) {
-    this._vm.$toastr('success', 'Kaydetme işlemi başarılı.')
+    this._vm.$toastr('success', 'Update Process Completed')
   },
   addItem(state, item) {
-    this._vm.$toastr('success', 'Kaydetme işlemi başarılı.')
+    this._vm.$toastr('success', 'Save Process Completed')
     state.all.push(item)
-    state.selected = item
-    state.isNew = false
-  },
-  setErrors(state, errors) {
-    state.errors = errors
-    if (errors.length > 0)
-      this._vm.$toastr('error', errors.map(e => {
-        return e.message
-      }).join('<br/>'))
-  },
-  setSelectedItem(state, item) {
-    state.isNew = false
-    state.selected = item
-  },
-  newItem(state, item) {
-    state.isNew = true
-    item.htmlContent = ''
-    state.selected = item
-    this._vm.$toastr('info', 'Yeni Kayıt.')
   },
   removeItem(state, payload) {
     state.all.splice(state.all.findIndex(x => x.id == payload.id), 1)
-    state.selected = null
-    this._vm.$toastr('success', 'Silme işlemi başarılı')
+    this._vm.$toastr('success', 'Delete Process Completed')
+  },
+  setErrors(state, error) {
+    state.errors.push(error)
+    if (state.errors.length > 0) {
+      this._vm.$toastr('error', 'Unexpected error occurred while processing')
+      console.error(error)
+    }
   }
 }
 
 // Actions
 const actions = {
   getAll({ commit }) {
-    commit('setErrors', [])
-
-    window.axios.get(apiPath)
-      .then(response => {
-        commit('setItems', response.data)
-      })
-      .catch(e => {
-        commit('setErrors', e.response.data)
-      })
+    return new Promise((resolve, reject) => {
+      window.axios.get(apiPath)
+        .then(response => {
+          commit('setItems', response.data)
+          resolve(response)
+        })
+        .catch(e => {
+          commit('setErrors', e)
+          reject(e)
+        })
+    })
   },
+
   onSave({ commit }, payload) {
-    commit('setErrors', [])
-
-    if (payload.id == 0) {
-      window.axios({
-        method: 'post',
-        url: apiPath,
-        data: payload
-      })
-        .then(response => {
-          commit('addItem', response.data)
+    return new Promise((resolve, reject) => {
+      if (payload.id == 0) {
+        window.axios({
+          method: 'post',
+          url: apiPath,
+          data: payload
         })
-        .catch(e => {
-          commit('setErrors', e.response.data)
+          .then(response => {
+            commit('addItem', response.data)
+            resolve(response)
+          })
+          .catch(e => {
+            commit('setErrors', e)
+            reject(e)
+          })
+      } else {
+        window.axios({
+          method: 'put',
+          url: apiPath + payload.id,
+          data: payload
         })
-    } else {
-      window.axios({
-        method: 'put',
-        url: apiPath + payload.id,
-        data: payload
-      })
-        .then(response => {
-          commit('updateItem', response.data)
-        })
-        .catch(e => {
-          commit('setErrors', e.response.data)
-        })
-    }
-
+          .then(response => {
+            commit('updateItem', response.data)
+            resolve(response)
+          })
+          .catch(e => {
+            commit('setErrors', e)
+            reject(e)
+          })
+      }
+    })
   },
+
   onNew({ commit }) {
-    window.axios.get(apiPath + '-1')
-      .then(response => {
-        commit('newItem', response.data)
-      })
-      .catch(e => {
-        commit('setErrors', e.response.data)
-      })
+    return new Promise((resolve, reject) => {
+      window.axios.get(apiPath + '-1')
+        .then(response => {
+          this._vm.$toastr('info', 'New Record Created')
+          resolve(response)
+        })
+        .catch(e => {
+          commit('setErrors', e)
+          reject(e)
+        })
+    })
+  },
 
-  },
   onDelete({ commit }, id) {
-    window.axios.delete(apiPath + id)
-      .then(response => {
-        commit('removeItem', response.data)
-      })
-      .catch(e => {
-        commit('setErrors', e.response.data)
-      })
-  },
-  onCardSelected({ commit }, payload) {
-    commit('setSelectedItem', payload)
+    return new Promise((resolve, reject) => {
+      window.axios.delete(apiPath + id)
+        .then(response => {
+          commit('removeItem', response.data)
+          resolve(response)
+        })
+        .catch(e => {
+          commit('setErrors', e)
+          reject(e)
+        })
+    })
   }
 }
 

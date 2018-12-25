@@ -41,9 +41,14 @@ namespace bestdealpharma.com
 
       services.ConfigureApplicationCookie(options =>
       {
-        options.LoginPath = "/Account/Login";
-        options.LogoutPath = "/Account/Logout";
-        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.Events= new Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents
+        {
+          OnRedirectToLogin = (context) =>
+          {
+            context.Response.StatusCode = 401;
+            return System.Threading.Tasks.Task.CompletedTask;
+          },
+        };
         options.SlidingExpiration = true;
         options.Cookie = new CookieBuilder
         {
@@ -96,6 +101,8 @@ namespace bestdealpharma.com
       {
         app.UseExceptionHandler("/Home/Error");
       }
+
+      app.UseStatusCodePages();
 
       app.UseAuthentication();
 

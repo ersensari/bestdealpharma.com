@@ -24,6 +24,9 @@ const actions = {
         commit('setAuthenticatedUser', response.data)
       })
       .catch(err => {
+        if () {
+          err.response.status
+        } 
         console.error(err)
       })
   }

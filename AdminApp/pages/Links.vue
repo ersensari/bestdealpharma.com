@@ -26,7 +26,7 @@
                   <td>{{ props.item.displayOrder }}</td>
                   <td>{{ props.item.name }}</td>
                   <td>{{ props.item.url }}</td>
-                  <td class="justify-center px-0">
+                  <td class="text-xs-right text-no-wrap">
                     <v-tooltip top>
                       <v-btn icon small @click="onEdit(props.item)" slot="activator">
                         <v-icon small>

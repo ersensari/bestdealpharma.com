@@ -10,8 +10,7 @@ export default new Vuex.Store({
   modules: {
     user,
     links,
-    pages,
-    snackbar
+    pages
   },
   strict: false
 })

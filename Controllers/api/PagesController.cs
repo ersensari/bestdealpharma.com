@@ -31,12 +31,6 @@ namespace bestdealpharma.com.Controllers.Api
     [Route("api/Pages/{id}")]
     public async Task<IActionResult> GetPage([FromRoute] int id)
     {
-
-      if (!ModelState.IsValid)
-      {
-        return BadRequest(ModelState);
-      }
-
       if (id == -1) //isnew
       {
         return Ok(new Page());
@@ -85,7 +79,7 @@ namespace bestdealpharma.com.Controllers.Api
         }
       }
 
-      return NoContent();
+      return Ok(page);
     }
 
     // POST: api/Pages
@@ -118,6 +112,13 @@ namespace bestdealpharma.com.Controllers.Api
       if (page == null)
       {
         return NotFound();
+      }
+
+
+      var relatedLinks = _context.Links.Where(x => x.PageId == id);
+      foreach (var link in relatedLinks)
+      {
+        link.PageId = null;
       }
 
       _context.Pages.Remove(page);

@@ -18,11 +18,11 @@ export default {
       if (window.localStorage.getItem('token')) {
         config.headers['Authorization'] = 'Bearer ' + window.localStorage.getItem('token')
       }
-
+      window.getApp.systemBusy = true
       return config
     },
       (error) => {
-        // Do something with request error
+        window.getApp.systemBusy = false
         return Promise.reject(error)
       }
     )
@@ -30,10 +30,11 @@ export default {
     // Add a response interceptor
     _axios.interceptors.response.use(
       function (response) {
+        window.getApp.systemBusy = false
         return response
       },
       function (error) {
-        // Do something with response error
+        window.getApp.systemBusy = false
         return Promise.reject(error)
       }
     )

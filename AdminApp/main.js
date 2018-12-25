@@ -21,6 +21,10 @@ import '@deveodk/vue-toastr/dist/@deveodk/vue-toastr.css'
 
 // import colors from 'vuetify/es5/util/colors'
 
+import GlobalProperties from 'plugins/globalProperties'
+
+Vue.use(GlobalProperties)
+
 Vue.use(VuejsDialog, {
   html: true,
   loader: true,
@@ -43,8 +47,7 @@ Vue.use(VueToastr, {
   defaultPosition: 'toast-bottom-right',
   defaultType: 'info',
   defaultTimeout: 3000
-});
-
+})
 
 Vue.config.productionTip = false
 
