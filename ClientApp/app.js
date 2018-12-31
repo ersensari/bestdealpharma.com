@@ -1,7 +1,9 @@
 import Vue from 'vue'
-import axios from 'axios'
 import router from './router/index'
-import store from './store'
+import axios from 'plugins/axios'
+import myLocalStorage from 'plugins/myLocalStorage'
+import store from '@store'
+
 import { sync } from 'vuex-router-sync'
 import App from 'components/app-root'
 import { FontAwesomeIcon } from './icons'
@@ -11,18 +13,15 @@ import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 Vue.use(Vuetify, {
-  theme: {
-    primary: '#3f51b5',
-    secondary: '#b0bec5',
-    accent: '#8c9eff',
-    error: '#b71c1c'
-  }
+  theme: { primary: '#29B6F6', secondary: '#0277BD', accent: '#00E676', error: '#E65100', warning: '#FFE57F', info: '#80D8FF', success: '#00E676' }
 })
 
 // Registration of global components
 Vue.component('icon', FontAwesomeIcon)
 
-Vue.prototype.$http = axios
+Vue.use(axios, { showSpinner: false, useProgress: true })
+
+Vue.use(myLocalStorage)
 
 sync(store, router)
 
@@ -33,3 +32,4 @@ const app = new Vue({
 })
 
 export { app, router, store }
+

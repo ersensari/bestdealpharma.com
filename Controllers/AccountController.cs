@@ -45,17 +45,6 @@ namespace bestdealpharma.com.Controllers
     [HttpPost]
     public async Task<IActionResult> Login([FromBody]UserModel login)
     {
-
-      if (!_roleManager.Roles.Any(x => x.Name == "Admin"))
-        await _roleManager.CreateAsync(new IdentityRole("Admin"));
-
-      if (!_roleManager.Roles.Any(x => x.Name == "Editor"))
-        await _roleManager.CreateAsync(new IdentityRole("Editor"));
-
-      if (!_roleManager.Roles.Any(x => x.Name == "Call_Center"))
-        await _roleManager.CreateAsync(new IdentityRole("Call_Center"));
-
-
       IActionResult response = Unauthorized();
       var user = await AuthenticateUserAsync(login);
 
@@ -83,7 +72,7 @@ namespace bestdealpharma.com.Controllers
       var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
       if (result.Succeeded)
       {
-        user = new UserModel { Email = model.Email };
+        user = new UserModel { Email = model.Email, isLockout = result. IsLockedOut };
       }
       return user;
     }
@@ -140,6 +129,8 @@ namespace bestdealpharma.com.Controllers
       public string Password { get; set; }
 
       public bool? forAdminPanel { get; set; }
+
+      public bool isLockout { get; set; }
     }
 
     public class RegisterDto

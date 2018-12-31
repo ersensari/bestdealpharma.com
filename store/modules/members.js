@@ -1,6 +1,4 @@
-/* eslint eqeqeq: "error" */
-
-const apiPath = 'api/pages/'
+const apiPath = 'api/members/'
 
 const state = {
   all: [],
@@ -52,7 +50,7 @@ const actions = {
 
   onSave ({ commit }, payload) {
     return new Promise((resolve, reject) => {
-      if (payload.id === 0) {
+      if (payload.person.id === 0) {
         window
           .axios({
             method: 'post',
@@ -71,7 +69,7 @@ const actions = {
         window
           .axios({
             method: 'put',
-            url: apiPath + payload.id,
+            url: apiPath + payload.person.id,
             data: payload
           })
           .then(response => {

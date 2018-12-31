@@ -1,6 +1,4 @@
-/* eslint eqeqeq: "error" */
-
-const apiPath = 'api/pages/'
+const apiPath = 'api/products/'
 
 const state = {
   all: [],

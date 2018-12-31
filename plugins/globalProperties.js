@@ -1,10 +1,8 @@
-
 const GlobalProperties = {
-  install(Vue) {
-
+  install (Vue) {
     // Page Module Definition
     Object.defineProperty(Vue.prototype, '$Modules', {
-      get() {
+      get () {
         return [
           { label: 'Content', id: 1 },
           { label: 'Products', id: 2 },
@@ -16,7 +14,6 @@ const GlobalProperties = {
         ]
       }
     })
-
   }
 }
 

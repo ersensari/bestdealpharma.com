@@ -12,14 +12,14 @@ namespace bestdealpharma.com.Controllers.api
 {
   [ApiController]
   [Produces("application/json")]
-  public class UserController : ControllerBase
+  public class MembersController : ControllerBase
   {
     private readonly Data.DbContext _context;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly SignInManager<IdentityUser> _signInManager;
 
-    public UserController(Data.DbContext context,
+    public MembersController(Data.DbContext context,
       UserManager<IdentityUser> userManager,
       RoleManager<IdentityRole> roleManager,
       SignInManager<IdentityUser> signInManager)
@@ -30,8 +30,8 @@ namespace bestdealpharma.com.Controllers.api
       _signInManager = signInManager;
     }
 
-    // GET: api/User
-    [Route("api/user")]
+    // GET: api/members
+    [Route("api/members")]
     [HttpGet]
     [Authorize(Roles = "Admin")]
     public IEnumerable<Member> GetPeople()
@@ -46,6 +46,9 @@ namespace bestdealpharma.com.Controllers.api
       if (!_roleManager.Roles.Any(x => x.Name == "Call_Center"))
         _roleManager.CreateAsync(new IdentityRole("Call_Center"));
 
+      if (!_roleManager.Roles.Any(x => x.Name == "Guest"))
+        _roleManager.CreateAsync(new IdentityRole("Guest"));
+
       var users = from p in _context.People
                   join u in _context.Users on p.UserId equals u.Id
                   join _roles in (from ur in _context.UserRoles join r in _context.Roles on ur.RoleId equals r.Id select new { role = r, ur.UserId }) on u.Id equals _roles.UserId into roles
@@ -53,8 +56,8 @@ namespace bestdealpharma.com.Controllers.api
 
       return users;
     }
-    // GET: api/User/5
-    [Route("api/user/{id}")]
+    // GET: api/members/5
+    [Route("api/members/{id}")]
     [HttpGet()]
     [Authorize]
     public async Task<IActionResult> GetPerson([FromRoute] int id)
@@ -62,11 +65,6 @@ namespace bestdealpharma.com.Controllers.api
       if (id == -1)//isnew
       {
         return Ok(new Member { Person = new Person(), User = new IdentityUser(), Roles = new IdentityRole[] { } });
-      }
-
-      if (id == -2)//GetAuthenticatedUser
-      {
-        return Ok(GetAuthenticatedUser().Result);
       }
 
       if (!ModelState.IsValid)
@@ -89,31 +87,8 @@ namespace bestdealpharma.com.Controllers.api
       return Ok(person);
     }
 
-    [Authorize]
-    private async Task<Member> GetAuthenticatedUser()
-    {
-
-      var curUser = await _userManager.GetUserAsync(User);
-
-      var users = from p in _context.People
-                  join u in _context.Users on p.UserId equals u.Id
-                  join _roles in (from ur in _context.UserRoles join r in _context.Roles on ur.RoleId equals r.Id select new { role = r, ur.UserId }) on u.Id equals _roles.UserId into roles
-                  select new Member { Person = p, User = u, Roles = roles.Select(x => x.role) };
-
-      var member = await users.SingleOrDefaultAsync(m => m.User.Email == curUser.Email);
-      if (member == null)
-      {
-        return new Member { User = curUser, Person = new Person { Name = curUser.UserName, Surname = "" } };
-      }
-      else
-      {
-        return member;
-      }
-    }
-
-
-    // PUT: api/User/5
-    [Route("api/user/{id}")]
+    // PUT: api/members/5
+    [Route("api/members/{id}")]
     [HttpPut()]
     [Authorize(Roles = "Admin")]
 
@@ -172,6 +147,11 @@ namespace bestdealpharma.com.Controllers.api
 
         #endregion
 
+        #region lockout
+        await _userManager.SetLockoutEnabledAsync(_user, member.User.LockoutEnabled);
+        #endregion
+
+
         _context.Entry(person).State = EntityState.Modified;
 
         try
@@ -194,8 +174,8 @@ namespace bestdealpharma.com.Controllers.api
       return Ok(member);
     }
 
-    // POST: api/User
-    [Route("api/user")]
+    // POST: api/members
+    [Route("api/members")]
     [HttpPost]
     [Authorize(Roles = "Admin")]
 
@@ -255,8 +235,8 @@ namespace bestdealpharma.com.Controllers.api
       return CreatedAtAction("GetPerson", new { id = member.Person.Id }, member);
     }
 
-    // DELETE: api/User/5
-    [Route("api/user/{id}")]
+    // DELETE: api/members/5
+    [Route("api/members/{id}")]
     [Authorize(Roles = "Admin")]
 
     [HttpDelete()]
@@ -282,15 +262,6 @@ namespace bestdealpharma.com.Controllers.api
     private bool PersonExists(int id)
     {
       return _context.People.Any(e => e.Id == id);
-    }
-
-    [Route("api/user/logout")]
-    [HttpGet]
-    [Authorize]
-    public async Task<IActionResult> Logout()
-    {
-      await _signInManager.SignOutAsync();
-      return Ok();
     }
   }
 }

@@ -77,7 +77,7 @@ Vue.use(Vuetify, {
   }
 })
 
-Vue.use(axios)
+Vue.use(axios, { showSpinner: true, useProgress: true })
 Vue.use(myLocalStorage)
 sync(store, router)
 

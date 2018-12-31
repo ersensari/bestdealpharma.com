@@ -1,5 +1,4 @@
 const Menu = [
-  { header: 'Apps' },
   {
     title: 'Dashboard',
     icon: 'dashboard',
@@ -7,30 +6,33 @@ const Menu = [
   },
   { divider: true },
   {
-    title: 'Page Management',
-    icon: 'widgets',
-    name: 'Pages',
+    title: 'Membership',
+    icon: 'streetview',
+    name: 'Membership',
     items: [
-      { name: 'Links', title: 'Links', component: 'Links' },
-      { name: 'Pages', title: 'Pages', component: 'Pages' }
+      { name: 'Members', title: 'Members', component: 'Members' },
+      { name: 'Orders', title: 'Orders', component: 'Orders' },
+      { name: 'Messages', title: 'Messages', component: 'Messages' }
     ]
   },
   { divider: true },
   {
-    title: 'Settings',
+    title: 'Management',
     icon: 'settings',
-    name: 'Settings'
+    name: 'Pages',
+    items: [
+      { name: 'Links', title: 'Links', component: 'Links' },
+      { name: 'Pages', title: 'Pages', component: 'Pages' },
+      { name: 'Products', title: 'Products', component: 'Products' },
+      { name: 'Settings', title: 'Settings', component: 'Settings' }
+    ]
   },
   { divider: true },
   {
-    title: 'Pages',
-    group: 'extra',
+    title: 'Reports',
     icon: 'list',
     items: [
-      { name: 'Login', title: 'Login', component: 'Login' },
-      { name: '404', title: '404', component: 'NotFound' },
-      { name: '403', title: '403', component: 'AccessDenied' },
-      { name: '500', title: '500', component: 'ServerError' }
+      { name: 'OrderList', title: 'OrderList', component: 'OrderList' }
     ]
   }
 ]

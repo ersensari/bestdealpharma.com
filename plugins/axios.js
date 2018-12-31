@@ -1,28 +1,25 @@
 'use strict'
 import axios from 'axios'
+import NProgress from 'nprogress'
+import '@/theme/nprogress.css'
 
 export default {
-  install(Vue) {
-    // Full config:  https://github.com/axios/axios#request-config
-    // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
-    // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-    // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-    let config = {
-      // baseURL: process.env.baseURL || process.env.apiUrl || ""
-      // timeout: 60 * 1000, // Timeout
-      // withCredentials: true, // Check cross-site Access-Control
-    }
+  install (Vue, options) {
+    let config = {}
     const _axios = axios.create(config)
 
-    _axios.interceptors.request.use((config) => {
-      if (window.localStorage.getItem('token')) {
-        config.headers['Authorization'] = 'Bearer ' + window.localStorage.getItem('token')
-      }
-      window.getApp.systemBusy = true
-      return config
-    },
-      (error) => {
-        window.getApp.systemBusy = false
+    _axios.interceptors.request.use(
+      config => {
+        if (options && options.showSpinner) NProgress.configure({ showSpinner: true })
+        if (options && options.useProgress) NProgress.start()
+
+        if (window.localStorage.getItem('token')) {
+          config.headers['Authorization'] = 'Bearer ' + window.localStorage.getItem('token')
+        }
+        return config
+      },
+      error => {
+        NProgress.done()
         return Promise.reject(error)
       }
     )
@@ -30,11 +27,11 @@ export default {
     // Add a response interceptor
     _axios.interceptors.response.use(
       function (response) {
-        window.getApp.systemBusy = false
+        NProgress.done()
         return response
       },
       function (error) {
-        window.getApp.systemBusy = false
+        NProgress.done()
         return Promise.reject(error)
       }
     )
@@ -43,12 +40,12 @@ export default {
     window.axios = _axios
     Object.defineProperties(Vue.prototype, {
       axios: {
-        get() {
+        get () {
           return _axios
         }
       },
       $axios: {
-        get() {
+        get () {
           return _axios
         }
       }

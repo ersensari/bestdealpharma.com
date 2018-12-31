@@ -88,7 +88,7 @@ const mutations = {
     let parentId = state.parentItem != null ? state.parentItem.id : null
     state.allFiltered = state.all.filter(x => x.parentId == parentId)
     this._vm.$toastr('success', 'Update Process Completed')
-    
+
   },
   addItem(state, item) {
     this._vm.$toastr('success', 'Save Process Completed')

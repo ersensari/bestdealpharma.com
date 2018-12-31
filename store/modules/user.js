@@ -5,7 +5,7 @@ const state = {
 }
 
 const getters = {
-  getAuthenticatedUserName: (state) => {
+  getAuthenticatedUserName: state => {
     if (state.authenticatedUser) {
       return state.authenticatedUser.name + ' ' + state.authenticatedUser.surname
     }
@@ -19,14 +19,16 @@ const mutations = {
 }
 const actions = {
   getAuthenticatedUser: ({ commit }) => {
-    window.axios.get(baseApiUri + 'GetAuthenticatedPerson')
+    window.axios
+      .get(baseApiUri + 'GetAuthenticatedPerson')
       .then(response => {
         commit('setAuthenticatedUser', response.data)
       })
       .catch(err => {
-        if () {
-          err.response.status
-        } 
+        if (err.response.status === 401) {
+          window.localStorage.removeItem('token')
+          window.localStorage.removeItem('user')
+        }
         console.error(err)
       })
   }

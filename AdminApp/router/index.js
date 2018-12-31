@@ -25,8 +25,7 @@ router.beforeEach((to, from, next) => {
       if (to.matched.some(record => record.meta.is_admin)) {
         if (user.roles && user.roles.filter(x => x.name == 'Admin').length > 0) {
           next()
-        }
-        else {
+        } else {
           next({ name: 'AccessDenied' })
         }
       } else {
@@ -36,8 +35,7 @@ router.beforeEach((to, from, next) => {
   } else if (to.matched.some(record => record.meta.guest)) {
     if (!window.localStorage.getItem('token')) {
       next()
-    }
-    else {
+    } else {
       next({ name: '/' })
     }
   } else {
@@ -46,7 +44,6 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  // ...
   NProgress.done()
 })
 
