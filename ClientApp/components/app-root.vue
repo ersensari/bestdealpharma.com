@@ -29,15 +29,24 @@
             <v-toolbar>
               <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
               <v-toolbar-items class="hidden-sm-and-down">
-                <v-btn flat v-for="link in links" :to="link.url">{{link.name}}</v-btn>
+                <v-btn flat v-for="link in links" :to="link.url" :key="link.id">{{link.name}}</v-btn>
               </v-toolbar-items>
               <v-spacer></v-spacer>
               <v-text-field hide-details
                             prepend-icon="search"
                             label="Search Drug"></v-text-field>
-              <v-btn icon large class="mr-3">
-                <v-icon large color="grey lighten-1">keyboard</v-icon>
-              </v-btn>
+              <v-menu offset-y max-width="200">
+                <v-btn icon large class="mr-3" slot="activator">
+                  <v-icon large color="grey lighten-1">keyboard</v-icon>
+                </v-btn>
+                <v-card>
+                  <v-btn small icon v-for="(item, index) in alphabet"
+                         :key="index"
+                         @click="onAlphabetSelected(item)">
+                    {{item}}
+                  </v-btn>
+                </v-card>
+              </v-menu>
               <v-btn icon large>
                 <v-badge left>
                   <span slot="badge">6</span>
@@ -80,12 +89,13 @@
       })
     },
     data: () => ({
-      drawer: null
+      drawer: null,
+      alphabet: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '#']
     }),
+    methods: {
+      onAlphabetSelected: (e) => {
+
+      }
+    }
   }
 </script>
-<style type="text/css">
-  a :hover {
-    text-decoration: none !important;
-  }
-</style>
