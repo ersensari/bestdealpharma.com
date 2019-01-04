@@ -1,10 +1,13 @@
 <template>
   <v-navigation-drawer absolute temporary v-model="collapse">
     <v-list dense>
-      <v-list-tile v-for="link in links" :key="link.id" :to="link.url" ripple="ripple">
+      <v-list-tile v-for="link in routes" :key="link.name" :to="link.path" ripple="ripple">
+        <v-list-tile-action>
+          <v-icon v-if="link.icon">{{link.icon}}</v-icon>
+        </v-list-tile-action>
         <v-list-tile-content>
           <v-list-tile-title>
-            <v-icon>keyboard_arrow_right</v-icon>  {{ link.name }}
+            {{ link.display | capitalize}}
           </v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
@@ -12,8 +15,9 @@
   </v-navigation-drawer>
 </template>
 <script>
-  import { routes } from '../router/routes'
-  import { mapActions, mapGetters, mapState } from 'vuex'
+  import {routes} from '../router/routes'
+  import {mapActions, mapGetters, mapState} from 'vuex'
+
   export default {
     props: ['drawer'],
     data() {
@@ -23,7 +27,9 @@
       }
     },
     watch: {
-      drawer(val) { this.collapse = val }
+      drawer(val) {
+        this.collapse = val
+      }
     },
     computed: {
       ...mapState({

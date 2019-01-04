@@ -5,7 +5,9 @@
       <v-container>
         <v-layout>
           <v-flex>
-            <a href="/"><v-img src="images/logo.png" width="180" /></a>
+            <a href="/">
+              <v-img src="images/logo.png" width="180"/>
+            </a>
           </v-flex>
         </v-layout>
       </v-container>
@@ -29,7 +31,8 @@
             <v-toolbar>
               <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
               <v-toolbar-items class="hidden-sm-and-down">
-                <v-btn flat v-for="link in links" :to="link.url" :key="link.id">{{link.name}}</v-btn>
+                <v-btn flat v-for="link in routes" :to="link.path" :key="link.name">{{link.display | capitalize}}
+                </v-btn>
               </v-toolbar-items>
               <v-spacer></v-spacer>
               <v-text-field hide-details
@@ -74,14 +77,17 @@
 </template>
 <script>
   import NavMenu from './nav-menu'
-  import { mapActions, mapGetters, mapState } from 'vuex'
+  import {routes} from '../router/routes'
+
+  import {mapActions, mapGetters, mapState} from 'vuex'
+
   export default {
     components: {
       'nav-menu': NavMenu
     },
     created() {
-      this.$store.dispatch("links/GetLinkHierarchy");
-
+      this.$store.dispatch("links/GetLinkHierarchy")
+      window.getApp = this;
     },
     computed: {
       ...mapState({
@@ -89,6 +95,7 @@
       })
     },
     data: () => ({
+      routes,
       drawer: null,
       alphabet: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '#']
     }),

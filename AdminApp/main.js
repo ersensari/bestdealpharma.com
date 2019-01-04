@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import Vue from 'vue'
 import App from './App'
-import { sync } from 'vuex-router-sync'
+import {sync} from 'vuex-router-sync'
 
 import Vuetify from 'vuetify'
 import router from './router'
@@ -10,7 +10,7 @@ import './theme/default.styl'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 import Truncate from 'lodash.truncate'
-import axios from 'plugins/axios'
+import axiosPlugin from 'plugins/axios'
 import myLocalStorage from 'plugins/myLocalStorage'
 import store from '@store'
 
@@ -23,7 +23,7 @@ import '@deveodk/vue-toastr/dist/@deveodk/vue-toastr.css'
 
 import GlobalProperties from 'plugins/globalProperties'
 
-Vue.use(GlobalProperties)
+Vue.use(GlobalProperties);
 
 Vue.use(VuejsDialog, {
   html: true,
@@ -31,7 +31,7 @@ Vue.use(VuejsDialog, {
   okText: 'Ok',
   cancelText: 'Cancal',
   animation: 'bounce'
-})
+});
 
 Vue.use(VuetifyConfirm, {
   buttonTrueText: 'OK',
@@ -41,19 +41,19 @@ Vue.use(VuetifyConfirm, {
   title: 'Warning',
   width: 300,
   property: '$confirm'
-})
+});
 
 Vue.use(VueToastr, {
   defaultPosition: 'toast-bottom-right',
   defaultType: 'info',
   defaultTimeout: 3000
-})
+});
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 // Helpers
 // Global filters
-Vue.filter('truncate', Truncate)
+Vue.filter('truncate', Truncate);
 
 Vue.use(Vuetify, {
   options: {
@@ -75,17 +75,17 @@ Vue.use(Vuetify, {
       error: '#b71c1c'
     }
   }
-})
+});
 
-Vue.use(axios, { showSpinner: true, useProgress: true })
-Vue.use(myLocalStorage)
-sync(store, router)
+Vue.use(axiosPlugin, {showSpinner: true, useProgress: true});
+Vue.use(myLocalStorage);
+sync(store, router);
 
 /* eslint-disable no-new */
 const app = new Vue({
   router,
   store,
   ...App
-})
+});
 
-export { app, router }
+export {app, router}

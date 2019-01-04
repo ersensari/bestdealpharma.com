@@ -1,22 +1,22 @@
-const path = require('path')
-const webpack = require('webpack')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const path = require('path');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = () => {
-  console.log('Building vendor files for \x1b[33m%s\x1b[0m', process.env.NODE_ENV)
+  console.log('Building vendor files for \x1b[33m%s\x1b[0m', process.env.NODE_ENV);
 
-  const isDevBuild = !(process.env.NODE_ENV && process.env.NODE_ENV === 'production')
-  const extractCSS = new ExtractTextPlugin('vendor.css')
+  const isDevBuild = !(process.env.NODE_ENV && process.env.NODE_ENV === 'production');
+  const extractCSS = new ExtractTextPlugin('vendor.css');
 
   return [{
-    stats: { modules: false },
+    stats: {modules: false},
     resolve: {
       extensions: ['.js']
     },
     module: {
       rules: [
-        { test: /\.css(\?|$)/, use: extractCSS.extract(['css-loader']) }
+        {test: /\.css(\?|$)/, use: extractCSS.extract(['css-loader'])}
       ]
     },
     entry: {
@@ -53,4 +53,4 @@ module.exports = () => {
       new webpack.optimize.UglifyJsPlugin()
     ])
   }]
-}
+};
