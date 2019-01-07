@@ -1,54 +1,79 @@
-const apiPath = 'api/products/'
+const apiPath = '/api/products/';
 
 const state = {
   all: [],
-  errors: []
-}
+  errors: [],
+  searchResult: []
+};
 
-const getters = {}
+const getters = {};
 
 const mutations = {
-  setItems (state, items) {
+  setItems(state, items) {
     state.all = items
   },
-  updateItem (state, item) {
+  setSearchResult(state, items) {
+    state.searchResult = items;
+  },
+  updateItem(state, item) {
     this._vm.$toastr('success', 'Update Process Completed')
   },
-  addItem (state, item) {
-    this._vm.$toastr('success', 'Save Process Completed')
+  addItem(state, item) {
+    this._vm.$toastr('success', 'Save Process Completed');
     state.all.push(item)
   },
-  removeItem (state, payload) {
-    state.all.splice(state.all.findIndex(x => x.id === payload.id), 1)
+  removeItem(state, payload) {
+    state.all.splice(state.all.findIndex(x => x.id === payload.id), 1);
     this._vm.$toastr('success', 'Delete Process Completed')
   },
-  setErrors (state, error) {
-    state.errors.push(error)
+  setErrors(state, error) {
+    state.errors.push(error);
     if (state.errors.length > 0) {
-      this._vm.$toastr('error', 'Unexpected error occurred while processing')
+      this._vm.$toastr('error', 'Unexpected error occurred while processing');
       console.error(error)
     }
   }
-}
+};
 
 // Actions
 const actions = {
-  getAll ({ commit }) {
+  getAll({commit}) {
     return new Promise((resolve, reject) => {
       window.axios
         .get(apiPath)
         .then(response => {
-          commit('setItems', response.data)
+          commit('setItems', response.data);
           resolve(response)
         })
         .catch(e => {
-          commit('setErrors', e)
+          commit('setErrors', e);
+          reject(e)
+        })
+    })
+  },
+  find({commit}, criteria) {
+    return new Promise((resolve, reject) => {
+      window.axios
+        .get(apiPath + 'find', {
+            params:
+              {
+                keyword: criteria.keyword,
+                byLetter: criteria.byLetter
+              }
+          }
+        )
+        .then(response => {
+          commit('setSearchResult', response.data);
+          resolve(response)
+        })
+        .catch(e => {
+          commit('setErrors', e);
           reject(e)
         })
     })
   },
 
-  onSave ({ commit }, payload) {
+  onSave({commit}, payload) {
     return new Promise((resolve, reject) => {
       if (payload.id === 0) {
         window
@@ -58,11 +83,11 @@ const actions = {
             data: payload
           })
           .then(response => {
-            commit('addItem', response.data)
+            commit('addItem', response.data);
             resolve(response)
           })
           .catch(e => {
-            commit('setErrors', e)
+            commit('setErrors', e);
             reject(e)
           })
       } else {
@@ -73,47 +98,47 @@ const actions = {
             data: payload
           })
           .then(response => {
-            commit('updateItem', response.data)
+            commit('updateItem', response.data);
             resolve(response)
           })
           .catch(e => {
-            commit('setErrors', e)
+            commit('setErrors', e);
             reject(e)
           })
       }
     })
   },
 
-  onNew ({ commit }) {
+  onNew({commit}) {
     return new Promise((resolve, reject) => {
       window.axios
         .get(apiPath + '-1')
         .then(response => {
-          this._vm.$toastr('info', 'New Record Created')
+          this._vm.$toastr('info', 'New Record Created');
           resolve(response)
         })
         .catch(e => {
-          commit('setErrors', e)
+          commit('setErrors', e);
           reject(e)
         })
     })
   },
 
-  onDelete ({ commit }, id) {
+  onDelete({commit}, id) {
     return new Promise((resolve, reject) => {
       window.axios
         .delete(apiPath + id)
         .then(response => {
-          commit('removeItem', response.data)
+          commit('removeItem', response.data);
           resolve(response)
         })
         .catch(e => {
-          commit('setErrors', e)
+          commit('setErrors', e);
           reject(e)
         })
     })
   }
-}
+};
 
 export default {
   namespaced: true,

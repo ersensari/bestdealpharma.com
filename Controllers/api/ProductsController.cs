@@ -11,57 +11,57 @@ namespace bestdealpharma.com.Controllers.Api
   [Produces("application/json")]
   [Authorize(Roles = "Admin,Editor")]
   [ApiController]
-  public class PagesController : ControllerBase
+  public class ProductsController : ControllerBase
   {
     private readonly Data.DbContext _context;
 
-    public PagesController(Data.DbContext context)
+    public ProductsController(Data.DbContext context)
     {
       _context = context;
     }
 
-    // GET: api/Pages
+    // GET: api/Products
     [HttpGet]
     [AllowAnonymous]
-    [Route("api/Pages")]
-    public IActionResult GetPages() => Ok(_context.Pages);
+    [Route("api/Products")]
+    public IActionResult GetProducts() => Ok(_context.Products);
 
-    // GET: api/Pages/5
+    // GET: api/Products/5
     [HttpGet]
-    [Route("api/Pages/{id}")]
-    public async Task<IActionResult> GetPage([FromRoute] int id)
+    [Route("api/Products/{id}")]
+    public async Task<IActionResult> GetProduct([FromRoute] int id)
     {
-      if (id == -1) //isnew
+      if (id == -1) // isnew
       {
-        return Ok(new Page());
+        return Ok(new Product());
       }
 
-      var page = await _context.Pages.SingleOrDefaultAsync(m => m.Id == id);
+      var p = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
 
-      if (page == null)
+      if (p == null)
       {
         return NotFound(id);
       }
 
-      return Ok(page);
+      return Ok(p);
     }
 
-    // PUT: api/Pages/5
+    // PUT: api/Products/5
     [HttpPut]
-    [Route("api/Pages/{id}")]
-    public async Task<IActionResult> PutPage([FromRoute] int id, [FromBody] Page page)
+    [Route("api/Products/{id}")]
+    public async Task<IActionResult> PutProduct([FromRoute] int id, [FromBody] Product product)
     {
       if (!ModelState.IsValid)
       {
         return BadRequest(ModelState);
       }
 
-      if (id != page.Id)
+      if (id != product.Id)
       {
         return BadRequest();
       }
 
-      _context.Entry(page).State = EntityState.Modified;
+      _context.Entry(product).State = EntityState.Modified;
 
       try
       {
@@ -69,7 +69,7 @@ namespace bestdealpharma.com.Controllers.Api
       }
       catch (DbUpdateConcurrencyException)
       {
-        if (!PageExists(id))
+        if (!ProductExists(id))
         {
           return NotFound();
         }
@@ -79,57 +79,62 @@ namespace bestdealpharma.com.Controllers.Api
         }
       }
 
-      return Ok(page);
+      return Ok(product);
     }
 
-    // POST: api/Pages
+    // POST: api/Products
     [HttpPost]
-    [Route("api/Pages")]
-    public async Task<IActionResult> PostPage([FromBody] Page page)
+    [Route("api/Products")]
+    public async Task<IActionResult> PostProduct([FromBody] Product product)
     {
       if (!ModelState.IsValid)
       {
         return BadRequest(ModelState);
       }
 
-      _context.Pages.Add(page);
+      _context.Products.Add(product);
       await _context.SaveChangesAsync();
 
-      return CreatedAtAction("GetPage", new { id = page.Id }, page);
+      return CreatedAtAction("GetProduct", new {id = product.Id}, product);
     }
 
-    // DELETE: api/Pages/5
+    // DELETE: api/Products/5
     [HttpDelete]
-    [Route("api/Pages/{id}")]
-    public async Task<IActionResult> DeletePage([FromRoute] int id)
+    [Route("api/Products/{id}")]
+    public async Task<IActionResult> DeleteProduct([FromRoute] int id)
     {
       if (!ModelState.IsValid)
       {
         return BadRequest(ModelState);
       }
 
-      var page = await _context.Pages.SingleOrDefaultAsync(m => m.Id == id);
-      if (page == null)
+      var product = await _context.Products.SingleOrDefaultAsync(m => m.Id == id);
+      if (product == null)
       {
         return NotFound();
       }
 
-
-      var relatedLinks = _context.Links.Where(x => x.PageId == id);
-      foreach (var link in relatedLinks)
-      {
-        link.PageId = null;
-      }
-
-      _context.Pages.Remove(page);
+      _context.Products.Remove(product);
       await _context.SaveChangesAsync();
 
-      return Ok(page);
+      return Ok(product);
     }
 
-    private bool PageExists(int id)
+    [HttpGet]
+    [Route("api/Products/find")]
+    [AllowAnonymous]
+    public async Task<IActionResult> FindProducts(string keyword, bool byLetter)
     {
-      return _context.Pages.Any(e => e.Id == id);
+      var linq = from p in _context.Products
+        where p.IsAvailable && (byLetter ? p.Title.StartsWith(keyword) : p.Title.Contains(keyword)) == true
+        select p;
+
+      return Ok(await linq.ToListAsync());
+    }
+
+    private bool ProductExists(int id)
+    {
+      return _context.Products.Any(e => e.Id == id);
     }
   }
 }

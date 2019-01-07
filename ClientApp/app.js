@@ -5,18 +5,23 @@ import myLocalStorage from 'plugins/myLocalStorage'
 import store from '@store'
 
 import {sync} from 'vuex-router-sync'
-import App from 'components/app-root'
+import App from './app-root'
 import {FontAwesomeIcon} from './icons'
 import Vuetify from 'vuetify'
 
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
+import VuejsDialog from 'vuejs-dialog'
+import VuetifyConfirm from 'vuetify-confirm'
+import VueToastr from '@deveodk/vue-toastr'
+import '@deveodk/vue-toastr/dist/@deveodk/vue-toastr.css'
+
 Vue.use(Vuetify, {
   theme: {
     primary: '#29B6F6',
     secondary: '#0277BD',
-    accent: '#00E676',
+    accent: '#206731',
     error: '#E65100',
     warning: '#FFE57F',
     info: '#80D8FF',
@@ -24,15 +29,42 @@ Vue.use(Vuetify, {
   }
 });
 
-// Registration of global components
-Vue.component('icon', FontAwesomeIcon);
+Vue.use(VuejsDialog, {
+  html: true,
+  loader: true,
+  okText: 'Ok',
+  cancelText: 'Cancal',
+  animation: 'bounce'
+});
 
+Vue.use(VuetifyConfirm, {
+  buttonTrueText: 'OK',
+  buttonFalseText: 'CANCEL',
+  color: 'warning',
+  icon: 'warning',
+  title: 'Warning',
+  width: 300,
+  property: '$confirm'
+});
+
+Vue.use(VueToastr, {
+  defaultPosition: 'toast-bottom-right',
+  defaultType: 'info',
+  defaultTimeout: 3000
+});
+
+Vue.component('fa-icon', FontAwesomeIcon);
 Vue.use(axiosPlugin, {showSpinner: false, useProgress: true});
 
 Vue.use(myLocalStorage);
 
 Vue.filter('capitalize', (value) => {
   return value.toString().toUpperCase()
+});
+
+Vue.filter('currency', (value) => {
+  let val = (value / 1).toFixed(2).replace('.', ',');
+  return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
 });
 
 sync(store, router);

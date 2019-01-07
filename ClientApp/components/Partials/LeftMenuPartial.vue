@@ -15,7 +15,7 @@
   </v-navigation-drawer>
 </template>
 <script>
-  import {routes} from '../router/routes'
+  import {routes} from '../../router/routes'
   import {mapActions, mapGetters, mapState} from 'vuex'
 
   export default {
