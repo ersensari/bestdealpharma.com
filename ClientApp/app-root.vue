@@ -11,7 +11,7 @@
           </v-flex>
           <v-spacer></v-spacer>
           <v-btn flat class="text-capitalize">
-            <fa-icon icon="sign-in-alt" class="mr-2" size="lg" />
+            <fa-icon icon="sign-in-alt" class="mr-2" size="lg"/>
             Login
           </v-btn>
           <v-btn flat class="text-capitalize">
@@ -26,7 +26,8 @@
         <v-toolbar class="elevation-2">
           <v-toolbar-side-icon @click.stop="drawer = !drawer" class="hidden-lg-and-up"></v-toolbar-side-icon>
           <v-toolbar-items class="hidden-md-and-down">
-            <v-btn flat v-for="link in routes" :to="link.path" :key="link.name">{{link.display | capitalize}}
+            <v-btn flat v-for="link in routes.filter(x=>!x.hideOnMenu)" :to="link.path" :key="link.name">{{link.display
+              | capitalize}}
             </v-btn>
           </v-toolbar-items>
           <v-spacer></v-spacer>
@@ -47,14 +48,16 @@
               </v-btn>
             </v-card>
           </v-menu>
-          <v-btn icon large>
-            <v-badge left color="red">
-              <span slot="badge">6</span>
-              <v-icon large
-                      color="grey lighten-1">
-                shopping_cart
-              </v-icon>
-            </v-badge>
+          <v-btn icon large to="/shopping-cart">
+            <v-fab-transition>
+              <v-badge left color="red">
+                <span slot="badge">{{cartCount}}</span>
+                <v-icon large
+                        color="grey lighten-1">
+                  shopping_cart
+                </v-icon>
+              </v-badge>
+            </v-fab-transition>
           </v-btn>
         </v-toolbar>
         <v-layout class="mt-3">
@@ -74,9 +77,10 @@
   import AppFab from './components/Partials/AppFab'
   import AppBasket from './components/Partials/AppBasket'
   import {routes} from './router/routes'
-  import AppEvents from './event';
+  import AppEvents from './event'
+  import Util from '@/util'
 
-  import {mapActions, mapGetters, mapState} from 'vuex'
+  import {mapState} from 'vuex'
 
   export default {
     components: {
@@ -95,7 +99,29 @@
     computed: {
       ...mapState({
         links: state => state.links.allHierarchical
-      })
+      }),
+      basket: {
+        get: function () {
+          return Util.getCookie('shopping-cart')
+        },
+
+        set: function (value) {
+          let cart = Util.getCookie('shopping-cart');
+          if (!cart) {
+            cart = []
+          }
+
+          if (!cart.find(c => id === value.id)) {
+            cart.push(value)
+          }
+          Util.setCookie('shopping-cart', cart, 60)
+        },
+      },
+      cartCount: {
+        get: function () {
+          return this.basket ? this.basket.length : 0
+        }
+      }
     },
     data: () => ({
       searchText: '',

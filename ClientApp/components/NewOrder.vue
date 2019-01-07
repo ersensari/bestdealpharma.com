@@ -49,8 +49,8 @@
     <v-layout row wrap v-if="pSearchText">
       <v-flex xs12>
         <v-card>
-          <v-flex xs12 ml-2 mt-2>
-            <v-avatar class="warning" title="Generic">G</v-avatar>
+          <v-flex xs12>
+            <v-avatar class="warning ml-2 mt-2" title="Generic">G</v-avatar>
             Generic
 
             <v-dialog
@@ -106,7 +106,8 @@
               </v-card>
             </v-dialog>
 
-            <v-avatar class="info" title="Brand"><span class="text--primary text--darken-4">B</span></v-avatar>
+            <v-avatar class="info ml-2 mt-2" title="Brand"><span class="text--primary text--darken-4">B</span>
+            </v-avatar>
             Brand
           </v-flex>
           <v-list three-line>
@@ -132,7 +133,7 @@
                   </v-list-tile-sub-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
-                  <v-btn icon large class="accent" title="Add To Cart">
+                  <v-btn icon large class="accent" title="Add To Cart" @click="addToShoppingCart(item)">
                     <v-icon>add_shopping_cart</v-icon>
 
                   </v-btn>
@@ -168,6 +169,9 @@
       },
       onSearchByLetter: (letter) => {
         window.getApp.$emit('APP_SEARCH_DRUG', letter)
+      },
+      addToShoppingCart: (product) => {
+        window.getApp.$emit('APP_ADD_TO_CART', product)
       }
     },
     computed: {

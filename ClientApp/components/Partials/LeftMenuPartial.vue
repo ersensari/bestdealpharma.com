@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer absolute temporary v-model="collapse">
     <v-list dense>
-      <v-list-tile v-for="link in routes" :key="link.name" :to="link.path" ripple="ripple">
+      <v-list-tile v-for="link in routes.filter(x=>!x.hideOnMenu)" :key="link.name" :to="link.path" ripple="ripple">
         <v-list-tile-action>
           <v-icon v-if="link.icon">{{link.icon}}</v-icon>
         </v-list-tile-action>

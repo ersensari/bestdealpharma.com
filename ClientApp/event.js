@@ -56,5 +56,11 @@ export default [
     callback: function (searchText) {
       this.$router.push({name: 'product-search', params: {pSearchText: searchText}});
     }
+  },
+  {
+    name: 'APP_ADD_TO_CART',
+    callback: function (product) {
+      window.getApp.basket = product
+    }
   }
 ]
