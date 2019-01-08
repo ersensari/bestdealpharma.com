@@ -51,7 +51,7 @@
           <v-btn icon large to="/shopping-cart">
             <v-fab-transition>
               <v-badge left color="red">
-                <span slot="badge">{{cartCount}}</span>
+                <span slot="badge">{{cartLength}}</span>
                 <v-icon large
                         color="grey lighten-1">
                   shopping_cart
@@ -78,7 +78,6 @@
   import AppBasket from './components/Partials/AppBasket'
   import {routes} from './router/routes'
   import AppEvents from './event'
-  import Util from '@/util'
 
   import {mapState} from 'vuex'
 
@@ -95,35 +94,24 @@
       });
 
       window.getApp = this;
+
+      this.cartLength = this.basket.length;
     },
     computed: {
       ...mapState({
         links: state => state.links.allHierarchical
       }),
-      basket: {
-        get: function () {
-          return Util.getCookie('shopping-cart')
-        },
-
-        set: function (value) {
-          let cart = Util.getCookie('shopping-cart');
-          if (!cart) {
-            cart = []
-          }
-
-          if (!cart.find(c => id === value.id)) {
-            cart.push(value)
-          }
-          Util.setCookie('shopping-cart', cart, 60)
-        },
-      },
-      cartCount: {
-        get: function () {
-          return this.basket ? this.basket.length : 0
+      basket: function () {
+        let cartCipherText = this.$cookies.get('shopping-cart');
+        if (cartCipherText) {
+          return this.$myUtil.decrypt(cartCipherText)
+        } else {
+          return []
         }
       }
     },
     data: () => ({
+      cartLength: 0,
       searchText: '',
       routes,
       drawer: null,

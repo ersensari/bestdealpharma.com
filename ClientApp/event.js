@@ -3,9 +3,9 @@ export default [
     name: 'APP_LOGOUT',
     callback: function (e) {
       this.axios.post('/account/logout').then(response => {
-        window.localStorage.removeItem('user')
-        window.localStorage.removeItem('token')
-        this.$toastr('success', 'Logout successfully')
+        window.localStorage.removeItem('user');
+        window.localStorage.removeItem('token');
+        this.$toastr('success', 'Logout successfully');
         this.$router.replace({path: '/login'})
       })
     }
@@ -18,7 +18,7 @@ export default [
   {
     name: 'APP_AUTH_FAILED',
     callback: function (e) {
-      this.$router.push('/login')
+      this.$router.push('/login');
       this.$message.error('Token has expired')
     }
   },
@@ -33,7 +33,7 @@ export default [
     name: 'APP_ACCESS_DENIED',
     // @error api response data
     callback: function (msg) {
-      this.$message.error(msg)
+      this.$message.error(msg);
       this.$router.push('/forbidden')
     }
   },
@@ -59,8 +59,22 @@ export default [
   },
   {
     name: 'APP_ADD_TO_CART',
-    callback: function (product) {
-      window.getApp.basket = product
+    callback: function (value) {
+      let cart = [];
+      let cartCipherText = this.$cookies.get('shopping-cart');
+      if (cartCipherText) {
+        cart = this.$myUtil.decrypt(cartCipherText)
+      }
+
+      if (!cart.find(c => c.id === value.id)) {
+        cart.push(value);
+        this.$toastr('success', value.title + ' / ' + value.strength + ' has been added to cart')
+      } else {
+        this.$toastr('error', value.title + ' / ' + value.strength + ' already added.')
+      }
+      this.$cookies.set('shopping-cart', this.$myUtil.encrypt(cart), '7d');
+      window.getApp.cartLength = cart.length;
     }
+
   }
 ]

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import router from './router/index'
 import axiosPlugin from 'plugins/axios'
 import myLocalStorage from 'plugins/myLocalStorage'
+import myUtil from 'plugins/myUtil'
 import store from '@store'
 
 import {sync} from 'vuex-router-sync'
@@ -16,6 +17,14 @@ import VuejsDialog from 'vuejs-dialog'
 import VuetifyConfirm from 'vuetify-confirm'
 import VueToastr from '@deveodk/vue-toastr'
 import '@deveodk/vue-toastr/dist/@deveodk/vue-toastr.css'
+
+import VueCookies from 'vue-cookies'
+
+Vue.use(VueCookies);
+
+VueCookies.config('7d');
+
+Vue.use(myUtil);
 
 Vue.use(Vuetify, {
   theme: {

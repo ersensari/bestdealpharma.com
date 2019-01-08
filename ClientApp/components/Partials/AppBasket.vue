@@ -2,7 +2,7 @@
   <v-fab-transition>
     <v-btn icon large fixed="fixed" bottom="bottom" left="left" color="accent" v-scroll="onScroll" v-show="fab" @click="toTop">
       <v-badge left color="red">
-        <span slot="badge">6</span>
+        <span slot="badge">{{cartLength}}</span>
         <v-icon>
           shopping_cart
         </v-icon>
@@ -18,7 +18,11 @@ export default {
   data: () => ({
     fab: false
   }),
-
+computed:{
+  cartLength:function () {
+    return window.getApp.cartLength
+  }
+},
   methods: {
     onScroll () {
       if (typeof window === 'undefined') return;

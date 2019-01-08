@@ -23,29 +23,10 @@ const toggleFullScreen = () => {
   }
 }
 
-const getCookie = (name) => {
-  // eslint-disable-next-line one-var
-  var arr, reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
-  if (arr = document.cookie.match(reg)) { return (arr[2]) } else { return null }
-}
-
-const setCookie = (cName, value, expiredays) => {
-  var exdate = new Date()
-  exdate.setDate(exdate.getDate() + expiredays)
-  document.cookie = cName + '=' + escape(value) + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
-}
-
-const delCookie = (name) => {
-  var exp = new Date()
-  exp.setTime(exp.getTime() - 1)
-  var cval = getCookie(name)
-  if (cval != null) { document.cookie = name + '=' + cval + ';expires=' + exp.toGMTString() }
-}
-
 const secretKey = '60EFA649C72C4118A989E3CE6D795579'
 const encrypt = (obj) => {
   var ciphertext = CryptoJS.AES.encrypt(JSON.stringify(obj), secretKey)
-  return ciphertext
+  return ciphertext.toString()
 }
 
 const decrypt = (ciphertext) => {
@@ -58,9 +39,6 @@ export default {
   randomElement,
   toggleFullScreen,
   kebab,
-  getCookie,
-  setCookie,
-  delCookie,
   encrypt,
   decrypt
 }
