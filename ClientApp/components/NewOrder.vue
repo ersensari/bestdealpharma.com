@@ -133,10 +133,18 @@
                   </v-list-tile-sub-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
-                  <v-btn icon large class="accent" title="Add To Cart" @click="addToShoppingCart(item)">
-                    <v-icon>add_shopping_cart</v-icon>
-
-                  </v-btn>
+                  <v-layout row>
+                    <v-flex xs4>
+                      <v-text-field label="Amount" value="1" :ref="'amount-' + item.id" mask="##" class=""
+                                    validate-on-blur required
+                                    :rules="[v => !!v || 'Amount is required']"></v-text-field>
+                    </v-flex>
+                    <v-flex mt-3 text-xs-right>
+                      <v-btn icon large class="accent" title="Add To Cart" @click="addToShoppingCart(item)">
+                        <v-icon>add_shopping_cart</v-icon>
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
                 </v-list-tile-action>
               </v-list-tile>
               <v-divider inset></v-divider>
@@ -170,8 +178,12 @@
       onSearchByLetter: (letter) => {
         window.getApp.$emit('APP_SEARCH_DRUG', letter)
       },
-      addToShoppingCart: (product) => {
-        window.getApp.$emit('APP_ADD_TO_CART', product)
+      addToShoppingCart: function (product) {
+        let amount = this.$refs['amount-' + product.id][0].lazyValue
+        window.getApp.$emit('APP_ADD_TO_CART', {
+          product: product,
+          amount: amount
+        })
       }
     },
     computed: {

@@ -66,11 +66,11 @@ export default [
         cart = this.$myUtil.decrypt(cartCipherText)
       }
 
-      if (!cart.find(c => c.id === value.id)) {
+      if (!cart.find(c => c.id === value.product.id)) {
         cart.push(value);
-        this.$toastr('success', value.title + ' / ' + value.strength + ' has been added to cart')
+        this.$toastr('success', value.product.title + ' / ' + value.product.strength + ' has been added to cart')
       } else {
-        this.$toastr('error', value.title + ' / ' + value.strength + ' already added.')
+        this.$toastr('error', value.product.title + ' / ' + value.product.strength + ' already added.')
       }
       this.$cookies.set('shopping-cart', this.$myUtil.encrypt(cart), '7d');
       window.getApp.cartLength = cart.length;

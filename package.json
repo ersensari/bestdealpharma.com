@@ -21,6 +21,7 @@
     "bytes": "^3.0.0",
     "core-js": "^2.5.3",
     "crypto-js": "^3.1.9-1",
+    "lodash": "^4.17.11",
     "lodash.truncate": "^4.4.2",
     "material-design-icons-iconfont": "^4.0.3",
     "nprogress": "^0.2.0",

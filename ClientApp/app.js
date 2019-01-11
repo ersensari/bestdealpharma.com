@@ -20,6 +20,8 @@ import '@deveodk/vue-toastr/dist/@deveodk/vue-toastr.css'
 
 import VueCookies from 'vue-cookies'
 
+import lodash from 'lodash'
+
 Vue.use(VueCookies);
 
 VueCookies.config('7d');
