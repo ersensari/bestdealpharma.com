@@ -27,11 +27,13 @@
                 </div>
                 <v-form ref="form">
                   <v-text-field
+                    ref="email"
                     v-model="email"
                     :rules="[rules.required, rules.email]"
                     label="E-mail"
                   ></v-text-field>
                   <v-text-field
+                    ref="password"
                     v-model="password"
                     :append-icon="showpwd1 ? 'visibility_off' : 'visibility'"
                     :rules="[rules.required, rules.min]"
@@ -43,6 +45,7 @@
                     @click:append="showpwd1 = !showpwd1"
                   ></v-text-field>
                   <v-text-field
+                    ref="confirmpassword"
                     v-model="confirmpassword"
                     :append-icon="showpwd2 ? 'visibility_off' : 'visibility'"
                     :rules="[rules.required, (v) => v == this.password || 'The passwords you entered don\'t match']"
@@ -69,7 +72,6 @@
                     required
                   ></v-text-field>
                   <v-menu
-                    ref="birthdatepicker"
                     :close-on-content-click="false"
                     v-model="birthdatepicker"
                     :nudge-right="40"
@@ -79,14 +81,22 @@
                     full-width
                     max-width="290px"
                     min-width="290px"
+                    ref="birthdatepickermenu"
                   >
                     <v-text-field
+                      ref="birthdate"
                       slot="activator"
                       v-model="birthdate"
                       label="Date Of Birth"
-                      persistent-hint
+                      readonly
+                      :rules="[() => !!birthdate || 'This field is required']"
                     ></v-text-field>
-                    <v-date-picker v-model="birthdate" no-title @input="birthdatepicker = false"></v-date-picker>
+                    <v-date-picker
+                      v-model="birthdate"
+                      :max="new Date().toISOString().substr(0, 10)"
+                      min="1935-01-01"
+                      ref="birthdatepicker"
+                    ></v-date-picker>
                   </v-menu>
                   <v-text-field
                     ref="mobilephone"
@@ -337,27 +347,15 @@
               </v-card-text>
               <v-divider class="mt-5"></v-divider>
               <v-card-actions>
-                <v-btn flat>Cancel</v-btn>
-                <v-spacer></v-spacer>
-                <v-slide-x-reverse-transition>
-                  <v-tooltip
-                    v-if="formHasErrors"
-                    left
-                  >
-                    <v-btn
-                      slot="activator"
-                      icon
-                      class="my-0"
-                      @click="resetForm"
-                    >
-                      <v-icon>refresh</v-icon>
-                    </v-btn>
-                    <span>Refresh form</span>
-                  </v-tooltip>
-                </v-slide-x-reverse-transition>
-                <v-btn color="primary" flat @click="submit">Submit</v-btn>
+                <v-flex class="text-xs-center">
+                  <v-btn color="primary" class="x-large" @click="register">Register</v-btn>
+                </v-flex>
               </v-card-actions>
             </v-card>
+            <v-alert type="error" dismissible v-model="showRegisterError" transition="scale-transition">
+              {{errorMessages}}
+            </v-alert>
+
           </v-flex>
           <v-flex xs12 sm12 md5 lg6>
             <v-card class="elevation-1">
@@ -397,7 +395,7 @@
 </template>
 
 <script>
-  import VuePerfectScrollbar from 'vue-perfect-scrollbar';
+  import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 
   export default {
     components: {
@@ -424,7 +422,6 @@
       showpwd1: false,
       showpwd2: false,
       confirmpassword: null,
-      formHasErrors: false,
       birthdatepicker: false,
       agreement: false,
       rules: {
@@ -436,6 +433,7 @@
           return pattern.test(value) || 'Invalid e-mail.'
         }
       },
+      showRegisterError: false,
       showLoginError: false,
       loginFormIsValid: false,
       loginLoading: false,
@@ -446,20 +444,24 @@
       }
 
     }),
-
+    watch: {
+      birthdatepicker(val) {
+        val && this.$nextTick(() => (this.$refs.birthdatepicker.activePicker = 'YEAR'))
+      }
+    },
     computed: {
       form() {
         return {
           email: this.email,
           name: this.name,
           surname: this.surname,
-          mobilePhone: this.mobilePhone,
-          homePhone: this.homePhone,
-          birthDate: this.birthDate,
+          mobilePhone: this.mobilephone,
+          homePhone: this.homephone,
+          birthDate: this.birthdate,
           address: this.address,
           city: this.city,
           state: this.state,
-          zipCode: this.zipCode,
+          zipCode: this.zipcode,
           country: this.country,
           password: this.password
         }
@@ -468,32 +470,25 @@
 
     methods: {
       register() {
-        this.formHasErrors = false;
-
-        Object.keys(this.form).forEach(f => {
-          if (!this.form[f]) this.formHasErrors = true;
-
-          this.$refs[f].validate(true)
-        });
-
-        if (!this.formHasErrors) {
-          var self = this;
-          this.showLoginError = false;
-          this.loginformloading = true;
-          this.axios.post("/account/register", JSON.stringify(this.form), {
+        this.errorMessages = '';
+        this.showRegisterError = false;
+        if (this.$refs.form.validate()) {
+          this.axios.post('/account/register', JSON.stringify(this.form), {
             headers: {
-              'Content-Type': 'application/json',
+              'Content-Type': 'application/json'
             }
           }).then(
             (response) => {
               this.$myLocalStorage.setEnc('user', response.data.user);
               window.localStorage.setItem('token', response.data.token);
-              this.$router.push(response.data.returnUrl);
+              this.$router.push(response.data.returnUrl)
             }
           ).catch(err => {
-            this.loginformloading = false;
             if (err.response.status === 401) {
-              this.showLoginError = true
+              this.showRegisterError = true
+            } else if (err.response.status === 400) {
+              this.showRegisterError = true;
+              this.errorMessages = err.response.data[0].description
             } else {
               console.log(err)
             }
@@ -504,10 +499,9 @@
       login() {
         if (this.$refs.loginForm.validate()) {
           this.showLoginError = false;
-          this.loginformloading = true;
-          this.axios.post("/account/login", JSON.stringify(this.loginModel), {
+          this.axios.post('/account/login', JSON.stringify(this.loginModel), {
             headers: {
-              'Content-Type': 'application/json',
+              'Content-Type': 'application/json'
             }
           }).then(
             (response) => {
@@ -516,7 +510,6 @@
               this.$router.push(response.data.returnUrl)
             }
           ).catch(err => {
-            this.loginformloading = false;
             if (err.response.status === 401) {
               this.showLoginError = true
             } else {

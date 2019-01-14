@@ -20,13 +20,18 @@ import '@deveodk/vue-toastr/dist/@deveodk/vue-toastr.css'
 
 import VueCookies from 'vue-cookies'
 
+
 import lodash from 'lodash'
+
+Vue.use(require('vue-moment'));
 
 Vue.use(VueCookies);
 
 VueCookies.config('7d');
 
 Vue.use(myUtil);
+Vue.use(axiosPlugin, {showSpinner: false, useProgress: true});
+Vue.use(myLocalStorage);
 
 Vue.use(Vuetify, {
   theme: {
@@ -65,9 +70,6 @@ Vue.use(VueToastr, {
 });
 
 Vue.component('fa-icon', FontAwesomeIcon);
-Vue.use(axiosPlugin, {showSpinner: false, useProgress: true});
-
-Vue.use(myLocalStorage);
 
 Vue.filter('capitalize', (value) => {
   return value.toString().toUpperCase()

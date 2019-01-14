@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 
 namespace bestdealpharma.com.Controllers
 {
@@ -114,7 +115,7 @@ namespace bestdealpharma.com.Controllers
       }
       else
       {
-        return BadRequest();
+        return BadRequest(result.Errors);
       }
     }
 
