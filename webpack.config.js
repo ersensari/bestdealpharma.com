@@ -48,8 +48,8 @@ module.exports = () => {
         {test: /\.vue$/, use: 'vue-loader'},
         {test: /\.js$/, use: 'babel-loader', exclude: /node_modules/},
         {
-          test: /\.css$/,
-          use: isDevBuild ? ['style-loader', 'css-loader'] : ExtractTextPlugin.extract({use: 'css-loader'})
+          test: /\.(css|scss)$/,
+          use: isDevBuild ? ['style-loader', 'css-loader', 'sass-loader'] : ExtractTextPlugin.extract({use: 'css-loader'})
         },
         {test: /\.styl(us)?$/, use: ['vue-style-loader', 'css-loader', 'stylus-loader']},
         {test: /\.(png|jpg|jpeg|gif|svg)$/, use: 'url-loader?limit=100000'},

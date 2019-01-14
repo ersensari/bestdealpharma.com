@@ -23,9 +23,9 @@
             <v-flex class="xs8 sm10 md4">
               <v-text-field hide-details
                             prepend-icon="search"
-                            v-model="searchText"
+                            v-model="searchCriteria.keyword"
                             @keyup.native.enter="onSearch"
-                            label="Search Drug"></v-text-field>
+                            label="Search for your medications"></v-text-field>
             </v-flex>
             <v-flex class="xs2 sm2 md2">
               <v-btn class="primary" flat
@@ -46,7 +46,7 @@
       <v-divider></v-divider>
     </section>
 
-    <v-layout row wrap v-if="pSearchText">
+    <v-layout row wrap v-if="searchResult.length>0">
       <v-flex xs12>
         <v-card>
           <v-flex xs12>
@@ -112,7 +112,7 @@
           </v-flex>
           <v-list three-line>
             <v-subheader>
-              <h4> Search result for "{{pSearchText}}". {{searchResult.length}} items has been found.</h4>
+              <h4> Search result for "{{searchCriteria.keyword}}". {{searchResult.length}} items has been found.</h4>
             </v-subheader>
             <template v-for="(item, index) in searchResult">
               <v-list-tile
@@ -160,7 +160,7 @@
 
   export default {
     data: () => ({
-      searchText: '',
+      // searchText: '',
       showWhatIsGeneric: false
 
     }),
@@ -173,7 +173,7 @@
     },
     methods: {
       onSearch: function () {
-        window.getApp.$emit('APP_SEARCH_DRUG', this.searchText)
+        window.getApp.$emit('APP_SEARCH_DRUG', this.searchCriteria.keyword)
       },
       onSearchByLetter: (letter) => {
         window.getApp.$emit('APP_SEARCH_DRUG', letter)
@@ -189,19 +189,20 @@
     computed: {
       alphabet: () => window.getApp.alphabet,
       ...mapState({
-        searchResult: state => state.products.searchResult
+        searchResult: state => state.products.searchResult,
+        searchCriteria: (state) => state.products.searchCriteria
       })
     },
     created() {
       if (this.pSearchText) {
-        this.searchText = this.pSearchText;
+        //this.searchText = this.pSearchText;
         this.$store.dispatch('products/find', {keyword: this.pSearchText, byLetter: this.pSearchText.length < 4})
       }
     },
     watch: {
       pSearchText: function (value) {
         if (value) {
-          this.searchText = value;
+          //this.searchText = value;
           this.$store.dispatch('products/find', {keyword: value, byLetter: value.length < 4})
         }
       }

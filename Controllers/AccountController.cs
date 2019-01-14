@@ -4,12 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 
 namespace bestdealpharma.com.Controllers
@@ -25,13 +27,15 @@ namespace bestdealpharma.com.Controllers
 
     private readonly Providers.IAuthenticatedPersonProvider _authPerson;
 
+    private readonly string[] AdminRoles = new string[] {"Admin", "Editor", "Call_Center"};
+
     public AccountController(
-        UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager,
-        RoleManager<IdentityRole> roleManager,
-        IConfiguration configuration,
-        Providers.IAuthenticatedPersonProvider authPerson
-        )
+      UserManager<IdentityUser> userManager,
+      SignInManager<IdentityUser> signInManager,
+      RoleManager<IdentityRole> roleManager,
+      IConfiguration configuration,
+      Providers.IAuthenticatedPersonProvider authPerson
+    )
     {
       _userManager = userManager;
       _signInManager = signInManager;
@@ -40,18 +44,30 @@ namespace bestdealpharma.com.Controllers
       _authPerson = authPerson;
     }
 
-    [HttpPost]
     [AllowAnonymous]
     [HttpPost]
-    public async Task<IActionResult> Login([FromBody]UserModel login)
+    public async Task<IActionResult> Login([FromBody] UserModel login)
     {
       IActionResult response = Unauthorized();
-      var user = await AuthenticateUserAsync(login);
 
-      if (user != null)
+      var result = await _signInManager.PasswordSignInAsync(login.Email, login.Password, false, false);
+
+      if (result.Succeeded)
       {
-        var tokenString = GenerateJSONWebToken(user);
-        response = Ok(new { token = tokenString, user = _authPerson.GetAuthenticatedUser(user.Email), returnUrl = login.forAdminPanel.GetValueOrDefault() ? "/admin" : "/" });
+        IdentityUser user = await _userManager.GetUserAsync(User);
+        var roles = await _userManager.GetRolesAsync(user);
+        if (login.forAdminPanel.GetValueOrDefault()
+            && !roles.Any(x => AdminRoles.Contains(x)))
+        {
+          return Unauthorized();
+        }
+
+        var tokenString = GenerateJsonWebToken(user);
+        response = Ok(new
+        {
+          token = tokenString, user = _authPerson.GetAuthenticatedUser(user.Email),
+          returnUrl = login.forAdminPanel.GetValueOrDefault() ? "/admin" : "/"
+        });
       }
 
       return response;
@@ -65,52 +81,62 @@ namespace bestdealpharma.com.Controllers
       return RedirectToAction("index", "home");
     }
 
-    private async Task<UserModel> AuthenticateUserAsync(UserModel model)
+    [HttpPost]
+    public async Task<IActionResult> Register([FromBody] RegisterDto model)
     {
-      UserModel user = null;
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
 
-      var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+      var identifier = new IdentityUser
+      {
+        UserName = model.Email,
+        Email = model.Email,
+        PasswordHash = Md5Hash(model.Password),
+        PhoneNumber = model.MobilePhone,
+        EmailConfirmed = false
+      };
+      var result = await _userManager.CreateAsync(identifier, model.Password);
+
       if (result.Succeeded)
       {
-        user = new UserModel { Email = model.Email, isLockout = result. IsLockedOut };
+        await _signInManager.SignInAsync(identifier, false);
+        IdentityUser user = await _userManager.GetUserAsync(User);
+        await _userManager.AddToRoleAsync(user, "Guest");
+        var tokenString = GenerateJsonWebToken(user);
+        var response = Ok(new
+        {
+          token = tokenString, user = _authPerson.GetAuthenticatedUser(user.Email),
+          returnUrl = "/account"
+        });
+        return response;
       }
-      return user;
+      else
+      {
+        return BadRequest();
+      }
     }
 
-    //[HttpPost]
-    //public async Task<object> Register([FromBody] RegisterDto model)
-    //{
-    //  if (!ModelState.IsValid)
-    //  {
-    //    return BadRequest(ModelState);
-    //  }
+    private static string Md5Hash(string input)
+    {
+      using (var md5 = MD5.Create())
+      {
+        var result = md5.ComputeHash(Encoding.ASCII.GetBytes(input));
+        return Encoding.ASCII.GetString(result);
+      }
+    }
 
-    //  var user = new IdentityUser
-    //  {
-    //    UserName = model.Email,
-    //    Email = model.Email
-    //  };
-    //  var result = await _userManager.CreateAsync(user, model.Password);
-
-    //  if (result.Succeeded)
-    //  {
-    //    await _signInManager.SignInAsync(user, false);
-    //    return GenerateJSONWebToken(model.Email, user);
-    //  }
-
-    //  throw new ApplicationException("UNKNOWN_ERROR");
-    //}
-
-
-    private string GenerateJSONWebToken(UserModel userInfo)
+    private string GenerateJsonWebToken(IdentityUser user)
     {
       var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
       var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-      var claims = new[] {
-        new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
+      var claims = new[]
+      {
+        new Claim(JwtRegisteredClaimNames.Email, user.Email),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-    };
+      };
       var token = new JwtSecurityToken(_configuration["Jwt:Issuer"],
         _configuration["Jwt:Issuer"],
         claims,
@@ -122,11 +148,9 @@ namespace bestdealpharma.com.Controllers
 
     public class UserModel
     {
-      [Required]
-      public string Email { get; set; }
+      [Required] public string Email { get; set; }
 
-      [Required]
-      public string Password { get; set; }
+      [Required] public string Password { get; set; }
 
       public bool? forAdminPanel { get; set; }
 
@@ -135,12 +159,20 @@ namespace bestdealpharma.com.Controllers
 
     public class RegisterDto
     {
-      [Required]
-      public string Email { get; set; }
+      [Required] public string Email { get; set; }
 
-      [Required]
-      [StringLength(100, ErrorMessage = "PASSWORD_MIN_LENGTH", MinimumLength = 6)]
-      public string Password { get; set; }
+      [Required] public string Password { get; set; }
+
+      [Required] public string Name { get; set; }
+      [Required] public string Surname { get; set; }
+      [Required] public string MobilePhone { get; set; }
+      public string HomePhone { get; set; }
+      [Required] public DateTime BirthDate { get; set; }
+      [Required] public string Address { get; set; }
+      [Required] public string City { get; set; }
+      [Required] public string State { get; set; }
+      [Required] public string ZipCode { get; set; }
+      [Required] public string Country { get; set; }
     }
   }
 }

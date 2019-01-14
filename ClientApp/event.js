@@ -66,7 +66,7 @@ export default [
         cart = this.$myUtil.decrypt(cartCipherText)
       }
 
-      if (!cart.find(c => c.id === value.product.id)) {
+      if (!cart.find(c => c.product.id === value.product.id)) {
         cart.push(value);
         this.$toastr('success', value.product.title + ' / ' + value.product.strength + ' has been added to cart')
       } else {
@@ -74,6 +74,7 @@ export default [
       }
       this.$cookies.set('shopping-cart', this.$myUtil.encrypt(cart), '7d');
       window.getApp.cartLength = cart.length;
+      window.getApp.cart = cart;
     }
 
   }

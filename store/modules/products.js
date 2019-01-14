@@ -3,7 +3,11 @@ const apiPath = '/api/products/';
 const state = {
   all: [],
   errors: [],
-  searchResult: []
+  searchResult: [],
+  searchCriteria: {
+    keyword: '',
+    byLetter: false
+  }
 };
 
 const getters = {};
@@ -32,6 +36,9 @@ const mutations = {
       this._vm.$toastr('error', 'Unexpected error occurred while processing');
       console.error(error)
     }
+  },
+  setSearchCriteria(state, criteria) {
+    state.searchCriteria = criteria;
   }
 };
 
@@ -52,6 +59,7 @@ const actions = {
     })
   },
   find({commit}, criteria) {
+    commit('setSearchCriteria', criteria);
     return new Promise((resolve, reject) => {
       window.axios
         .get(apiPath + 'find', {

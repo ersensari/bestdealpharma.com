@@ -7,6 +7,7 @@ import Policies from 'components/Policies'
 import ContactUs from 'components/ContactUs'
 import AboutUs from 'components/AboutUs'
 import ShoppingCart from 'components/ShoppingCart'
+import Register from 'components/Register'
 
 export const routes = [
   {name: 'home', path: '/', component: HomePage, display: 'Home', icon: 'home'},
@@ -37,6 +38,7 @@ export const routes = [
   {name: 'policies', path: '/policies', component: Policies, display: 'Policies'},
   {name: 'contact-us', path: '/contact-us', component: ContactUs, display: 'Contact Us'},
   {name: 'about-us', path: '/about-us', component: AboutUs, display: 'About Us'},
+  {name: 'register', path: '/register', component: Register, display: 'Register', hideOnMenu: true},
   {
     name: 'shopping-cart',
     path: '/shopping-cart',
