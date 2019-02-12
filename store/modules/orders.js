@@ -1,8 +1,11 @@
-const apiPath = 'api/members/';
+/* eslint eqeqeq: "error" */
+
+const apiPath = '/api/order/';
 
 const state = {
   all: [],
-  errors: []
+  errors: [],
+  prescriptions: []
 };
 
 const getters = {};
@@ -29,8 +32,8 @@ const mutations = {
       console.error(error)
     }
   },
-  setAddresses(state, payload) {
-    state.addresses = payload;
+  setPrescriptions(state, items) {
+    state.prescriptions = items;
   }
 };
 
@@ -39,7 +42,7 @@ const actions = {
   getAll({commit}) {
     return new Promise((resolve, reject) => {
       window.axios
-        .get(apiPath)
+        .get(apiPath + 'getOrders')
         .then(response => {
           commit('setItems', response.data);
           resolve(response)
@@ -53,7 +56,7 @@ const actions = {
 
   onSave({commit}, payload) {
     return new Promise((resolve, reject) => {
-      if (payload.person.id === 0) {
+      if (payload.id === 0) {
         window
           .axios({
             method: 'post',
@@ -72,7 +75,7 @@ const actions = {
         window
           .axios({
             method: 'put',
-            url: apiPath + payload.person.id,
+            url: apiPath + payload.id,
             data: payload
           })
           .then(response => {
@@ -112,6 +115,35 @@ const actions = {
         })
         .catch(e => {
           commit('setErrors', e);
+          reject(e)
+        })
+    })
+  },
+
+  getPrescriptions({commit}) {
+    return new Promise((resolve, reject) => {
+      window.axios
+        .get(apiPath + 'getPrescription')
+        .then(response => {
+          commit('setPrescriptions', response.data);
+          resolve(response)
+        })
+        .catch(e => {
+          reject(e)
+        })
+    })
+  },
+  createOrder({commit}, orderModel) {
+    return new Promise((resolve, reject) => {
+      window.axios({
+        method: 'post',
+        url: apiPath + 'createOrder',
+        data: orderModel
+      })
+        .then(response => {
+          resolve(response)
+        })
+        .catch(e => {
           reject(e)
         })
     })

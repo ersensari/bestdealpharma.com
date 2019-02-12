@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,9 +19,13 @@ namespace bestdealpharma.com
 {
   public class Startup
   {
-    public Startup(IConfiguration configuration)
+    private readonly ILogger _logger;
+
+    public Startup(IConfiguration configuration, ILogger<Startup> logger)
     {
       Configuration = configuration;
+      _logger = logger;
+
     }
 
     public IConfiguration Configuration { get; }
@@ -29,19 +34,21 @@ namespace bestdealpharma.com
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddDbContext<Data.DbContext>(options =>
-                                      options
-                                      .UseSqlServer(Configuration.GetConnectionString("dbContext"))
-                                      .ConfigureWarnings(warnings => warnings.Throw(CoreEventId.IncludeIgnoredWarning))
-                                      );
+        options
+          .UseSqlServer(Configuration.GetConnectionString("dbContext"))
+          .ConfigureWarnings(warnings => warnings.Throw(CoreEventId.IncludeIgnoredWarning))
+      );
+
+      _logger.LogInformation("bestdealpharma.com");
 
 
       services.AddIdentity<IdentityUser, IdentityRole>()
-          .AddEntityFrameworkStores<Data.DbContext>()
-          .AddDefaultTokenProviders();
+        .AddEntityFrameworkStores<Data.DbContext>()
+        .AddDefaultTokenProviders();
 
       services.ConfigureApplicationCookie(options =>
       {
-        options.Events= new Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents
+        options.Events = new Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents
         {
           OnRedirectToLogin = (context) =>
           {
@@ -63,7 +70,7 @@ namespace bestdealpharma.com
       services.AddAuthorization(options =>
       {
         options.AddPolicy("OnlyAdminRights", policy =>
-               policy.RequireRole("Admin", "Editor", "Call_Center"));
+          policy.RequireRole("Admin", "Editor", "Call_Center"));
       });
 
       services.AddMvc().AddJsonOptions(
@@ -73,8 +80,6 @@ namespace bestdealpharma.com
       // Add framework services.
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-      // Simple example with dependency injection for a data provider.
-      services.AddSingleton<Providers.IWeatherProvider, Providers.WeatherProviderFake>();
       services.AddScoped<Providers.IAuthenticatedPersonProvider, Providers.AuthenticatedPersonProvider>((ctx) =>
       {
         var datacontext = ctx.GetService<Data.DbContext>();
@@ -99,7 +104,9 @@ namespace bestdealpharma.com
       }
       else
       {
-        app.UseExceptionHandler("/Home/Error");
+        app.UseDeveloperExceptionPage();
+
+        //app.UseExceptionHandler("/Home/Error");
       }
 
       app.UseStatusCodePages();
@@ -111,20 +118,20 @@ namespace bestdealpharma.com
       app.UseMvc(routes =>
       {
         routes.MapRoute(
-                  name: "default",
-                  template: "{controller=Home}/{action=Index}/{id?}");
+          name: "default",
+          template: "{controller=Home}/{action=Index}/{id?}");
 
         routes.MapRoute(
-                  name: "api",
-                  template: "api/{controlle}/{action}/{id?}");
+          name: "api",
+          template: "api/{controlle}/{action}/{id?}");
 
         routes.MapSpaFallbackRoute(
-                  name: "spa-fallback",
-                  defaults: new { controller = "Home", action = "Index" });
+          name: "spa-fallback",
+          defaults: new {controller = "Home", action = "Index"});
 
         routes.MapSpaFallbackRoute(
-                  name: "admin-spa-fallback",
-                  defaults: new { controller = "Admin", action = "Index" });
+          name: "admin-spa-fallback",
+          defaults: new {controller = "Admin", action = "Index"});
       });
 
       // ===== Create tables ======

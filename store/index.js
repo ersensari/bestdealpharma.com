@@ -5,6 +5,8 @@ import links from './modules/links'
 import pages from './modules/pages'
 import products from './modules/products'
 import members from './modules/members'
+import orders from './modules/orders'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -13,7 +15,8 @@ export default new Vuex.Store({
     links,
     pages,
     products,
-    members
+    members,
+    orders
   },
   strict: false
 })

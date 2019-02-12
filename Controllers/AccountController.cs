@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using bestdealpharma.com.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,9 @@ namespace bestdealpharma.com.Controllers
   [Route("[controller]/[action]")]
   public class AccountController : Controller
   {
+    private readonly Data.DbContext _context;
+
+
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
 
@@ -35,9 +39,11 @@ namespace bestdealpharma.com.Controllers
       SignInManager<IdentityUser> signInManager,
       RoleManager<IdentityRole> roleManager,
       IConfiguration configuration,
-      Providers.IAuthenticatedPersonProvider authPerson
+      Providers.IAuthenticatedPersonProvider authPerson,
+      Data.DbContext context
     )
     {
+      _context = context;
       _userManager = userManager;
       _signInManager = signInManager;
       _roleManager = roleManager;
@@ -55,18 +61,24 @@ namespace bestdealpharma.com.Controllers
 
       if (result.Succeeded)
       {
-        IdentityUser user = await _userManager.GetUserAsync(User);
-        var roles = await _userManager.GetRolesAsync(user);
+        var identifier = new IdentityUser
+        {
+          UserName = login.Email,
+          Email = login.Email
+        };
+
+        var roles = await _userManager.GetRolesAsync(identifier);
         if (login.forAdminPanel.GetValueOrDefault()
             && !roles.Any(x => AdminRoles.Contains(x)))
         {
           return Unauthorized();
         }
 
-        var tokenString = GenerateJsonWebToken(user);
+        var tokenString = GenerateJsonWebToken(identifier);
         response = Ok(new
         {
-          token = tokenString, user = _authPerson.GetAuthenticatedUser(user.Email),
+          token = tokenString,
+          user = _authPerson.GetAuthenticatedUser(identifier.Email),
           returnUrl = login.forAdminPanel.GetValueOrDefault() ? "/admin" : "/"
         });
       }
@@ -94,21 +106,53 @@ namespace bestdealpharma.com.Controllers
       {
         UserName = model.Email,
         Email = model.Email,
-        PasswordHash = Md5Hash(model.Password),
-        PhoneNumber = model.MobilePhone,
-        EmailConfirmed = false
+        PhoneNumber = model.MobilePhone
       };
       var result = await _userManager.CreateAsync(identifier, model.Password);
 
       if (result.Succeeded)
       {
+        await _userManager.AddToRoleAsync(identifier, "Guest");
         await _signInManager.SignInAsync(identifier, false);
-        IdentityUser user = await _userManager.GetUserAsync(User);
-        await _userManager.AddToRoleAsync(user, "Guest");
-        var tokenString = GenerateJsonWebToken(user);
+        var tokenString = GenerateJsonWebToken(identifier);
+
+        var person = new Person()
+        {
+          Name = model.Name,
+          Surname = model.Surname,
+          Address = model.Address,
+          State = model.State,
+          City = model.City,
+          Country = model.Country,
+          BirthDate = model.BirthDate,
+          HomePhone = model.HomePhone,
+          MobilePhone = model.MobilePhone,
+          ZipCode = model.ZipCode,
+          UserId = identifier.Id
+        };
+
+        _context.People.Add(person);
+
+        var address = new Address()
+        {
+          State = model.State,
+          City = model.City,
+          Country = model.Country,
+          MobilePhone = model.MobilePhone,
+          ZipCode = model.ZipCode,
+          AddressLine = model.Address,
+          Person = person,
+          AddressName = "default"
+        };
+
+        _context.Addresses.Add(address);
+
+        _context.SaveChanges();
+
         var response = Ok(new
         {
-          token = tokenString, user = _authPerson.GetAuthenticatedUser(user.Email),
+          token = tokenString,
+          user = _authPerson.GetAuthenticatedUser(identifier.Email),
           returnUrl = "/account"
         });
         return response;

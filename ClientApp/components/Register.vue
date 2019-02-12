@@ -8,7 +8,8 @@
                   class="blue--text">
           <v-icon x-large class="deep-orange--text">person_add</v-icon>
           <h1 class="blue--text text--darken-4 mb-2 display-1 text-xs-center">New Customer Registration</h1>
-          <div class="blue--text text--darken-4 subheading mb-3 text-xs-center deep-orange--text">BestDealPharma.com is
+          <div class="blue--text text--darken-4 subheading mb-3 text-xs-center deep-orange--text">
+            BestDealPharma.com is
             your life insurance
           </div>
         </v-layout>
@@ -26,139 +27,105 @@
                   <h3>BestDealPharma.com is your life insurance</h3>
                 </div>
                 <v-form ref="form">
-                  <v-text-field
-                    ref="email"
-                    v-model="email"
-                    :rules="[rules.required, rules.email]"
-                    label="E-mail"
-                  ></v-text-field>
-                  <v-text-field
-                    ref="password"
-                    v-model="password"
-                    :append-icon="showpwd1 ? 'visibility_off' : 'visibility'"
-                    :rules="[rules.required, rules.min]"
-                    :type="showpwd1 ? 'text' : 'password'"
-                    name="input-10-1"
-                    label="Password"
-                    hint="At least 6 characters"
-                    counter
-                    @click:append="showpwd1 = !showpwd1"
-                  ></v-text-field>
-                  <v-text-field
-                    ref="confirmpassword"
-                    v-model="confirmpassword"
-                    :append-icon="showpwd2 ? 'visibility_off' : 'visibility'"
-                    :rules="[rules.required, (v) => v == this.password || 'The passwords you entered don\'t match']"
-                    :type="showpwd2 ? 'text' : 'password'"
-                    name="input-10-1"
-                    label="Confirm Password"
-                    counter
-                    @click:append="showpwd2 = !showpwd2"
-                  ></v-text-field>
-                  <v-text-field
-                    ref="name"
-                    v-model="name"
-                    :rules="[() => !!name || 'This field is required']"
-                    :error-messages="errorMessages"
-                    label="Name"
-                    required
-                  ></v-text-field>
-                  <v-text-field
-                    ref="surname"
-                    v-model="surname"
-                    :rules="[() => !!surname || 'This field is required']"
-                    :error-messages="errorMessages"
-                    label="Surname"
-                    required
-                  ></v-text-field>
-                  <v-menu
-                    :close-on-content-click="false"
-                    v-model="birthdatepicker"
-                    :nudge-right="40"
-                    lazy
-                    transition="scale-transition"
-                    offset-y
-                    full-width
-                    max-width="290px"
-                    min-width="290px"
-                    ref="birthdatepickermenu"
-                  >
-                    <v-text-field
-                      ref="birthdate"
-                      slot="activator"
-                      v-model="birthdate"
-                      label="Date Of Birth"
-                      readonly
-                      :rules="[() => !!birthdate || 'This field is required']"
-                    ></v-text-field>
-                    <v-date-picker
-                      v-model="birthdate"
-                      :max="new Date().toISOString().substr(0, 10)"
-                      min="1935-01-01"
-                      ref="birthdatepicker"
-                    ></v-date-picker>
+                  <v-text-field ref="email"
+                                v-model="email"
+                                :rules="[rules.required, rules.email]"
+                                label="E-mail"></v-text-field>
+                  <v-text-field ref="password"
+                                v-model="password"
+                                :append-icon="showpwd1 ? 'visibility_off' : 'visibility'"
+                                :rules="[rules.required, rules.min]"
+                                :type="showpwd1 ? 'text' : 'password'"
+                                label="Password"
+                                hint="At least 6 characters"
+                                counter
+                                @click:append="showpwd1 = !showpwd1"></v-text-field>
+                  <v-text-field ref="confirmpassword"
+                                v-model="confirmpassword"
+                                :append-icon="showpwd2 ? 'visibility_off' : 'visibility'"
+                                :rules="[rules.required, (v) => v == this.password || 'The passwords you entered don\'t match']"
+                                :type="showpwd2 ? 'text' : 'password'"
+                                label="Confirm Password"
+                                counter
+                                @click:append="showpwd2 = !showpwd2"></v-text-field>
+                  <v-text-field ref="name"
+                                v-model="name"
+                                :rules="[() => !!name || 'This field is required']"
+                                label="Name"
+                                required></v-text-field>
+                  <v-text-field ref="surname"
+                                v-model="surname"
+                                :rules="[() => !!surname || 'This field is required']"
+                                label="Surname"
+                                required></v-text-field>
+                  <v-menu :close-on-content-click="false"
+                          v-model="birthdatepicker"
+                          :nudge-right="40"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          max-width="290px"
+                          min-width="290px"
+                          ref="birthdatepickermenu">
+                    <v-text-field ref="birthdate"
+                                  slot="activator"
+                                  v-model="birthdate"
+                                  label="Date Of Birth"
+                                  readonly
+                                  :rules="[() => !!birthdate || 'This field is required']"></v-text-field>
+                    <v-date-picker v-model="birthdate"
+                                   :max="new Date().toISOString().substr(0, 10)"
+                                   min="1935-01-01"
+                                   ref="birthdatepicker"></v-date-picker>
                   </v-menu>
-                  <v-text-field
-                    ref="mobilephone"
-                    v-model="mobilephone"
-                    :rules="[() => !!mobilephone || 'This field is required']"
-                    :error-messages="errorMessages"
-                    label="Mobile Phone"
-                    required
-                  ></v-text-field>
-                  <v-text-field
-                    ref="homephone"
-                    v-model="homephone"
-                    label="Home Phone"
-                    hint="Optional"
-                  ></v-text-field>
-
-                  <v-text-field
-                    ref="address"
-                    :rules="[
-                          () => !!address || 'This field is required',
-                          () => !!address && address.length >= 25 || 'Address must be grater than 25 characters']"
-                    v-model="address"
-                    label="Address Line"
-                    counter="25"
-                    required
-                  ></v-text-field>
-                  <v-text-field
-                    ref="city"
-                    :rules="[() => !!city || 'This field is required']"
-                    v-model="city"
-                    label="City"
-                    required
-                  ></v-text-field>
-                  <v-text-field
-                    ref="state"
-                    v-model="state"
-                    :rules="[() => !!state || 'This field is required']"
-                    label="State/Province/Region"
-                    required
-                  ></v-text-field>
-                  <v-text-field
-                    ref="zipcode"
-                    :rules="[() => !!zipcode || 'This field is required']"
-                    v-model="zipcode"
-                    label="ZIP / Postal Code"
-                    required
-                  ></v-text-field>
-                  <v-autocomplete
-                    ref="country"
-                    :rules="[() => !!country || 'This field is required']"
-                    :items="countries"
-                    v-model="country"
-                    label="Country"
-                    placeholder="Select..."
-                    required
-                  ></v-autocomplete>
-
+                  <v-text-field ref="mobilephone"
+                                v-model="mobilephone"
+                                :rules="[() => !!mobilephone || 'This field is required']"
+                                label="Mobile Phone"
+                                required></v-text-field>
+                  <v-text-field ref="homephone"
+                                v-model="homephone"
+                                label="Home Phone"
+                                hint="Optional"></v-text-field>
+                  <v-text-field ref="address"
+                                :rules="[
+                                ()=>
+                    !!address || 'This field is required',
+                    () => !!address && address.length >= 25 || 'Address must be grater than 25 characters']"
+                                v-model="address"
+                                label="Address Line"
+                                counter="25"
+                                required
+                  >
+                  </v-text-field>
+                  <v-text-field ref="city"
+                                :rules="[() => !!city || 'This field is required']"
+                                v-model="city"
+                                label="City"
+                                required></v-text-field>
+                  <v-text-field ref="state"
+                                v-model="state"
+                                :rules="[() => !!state || 'This field is required']"
+                                label="State/Province/Region"
+                                required></v-text-field>
+                  <v-text-field ref="zipcode"
+                                :rules="[() => !!zipcode || 'This field is required']"
+                                v-model="zipcode"
+                                label="ZIP / Postal Code"
+                                required></v-text-field>
+                  <v-autocomplete ref="country"
+                                  :rules="[() => !!country || 'This field is required']"
+                                  :items="countries"
+                                  v-model="country"
+                                  label="Country"
+                                  placeholder="Select..."
+                                  required></v-autocomplete>
                   <vue-perfect-scrollbar class="drawer-menu--scroll" :settings="scrollSettings">
-
                     <v-flex class="agreement-scroll-area">
                       <h1>PATIENT AUTHORIZATION AGREEMENT</h1>
-                      <p>Patient Authorization Agreement
+                      <p>
+                        Patient Authorization Agreement
                         BestPrice Rx which includes its officers, directors, affiliates, representatives, agents,
                         contractors
                         and sub-contractors (collectively, "BestPrice Rx") is an international prescription referral
@@ -171,8 +138,8 @@
                         any of BestPrice Rx's authorized pharmacies located in Canada, the United Kingdom, India,
                         Mauritius,
                         Turkey, Vanuatu, USA, and elsewhere (collectively, the "Pharmacy"). I acknowledge and agree as
-                        follows:</p>
-
+                        follows:
+                      </p>
                       <p>
                         1. I am the age of majority, am fully competent to make my own health care decisions and have
                         obtained
@@ -337,12 +304,10 @@
                       </p>
                     </v-flex>
                   </vue-perfect-scrollbar>
-                  <v-checkbox
-                    v-model="agreement"
-                    :rules="[v => !!v || 'You must agree to continue!']"
-                    label="Yes, I agree to the Patient Authorization Agreement"
-                    required
-                  ></v-checkbox>
+                  <v-checkbox v-model="agreement"
+                              :rules="[v => !!v || 'You must agree to continue!']"
+                              label="Yes, I agree to the Patient Authorization Agreement"
+                              required></v-checkbox>
                 </v-form>
               </v-card-text>
               <v-divider class="mt-5"></v-divider>
@@ -351,11 +316,20 @@
                   <v-btn color="primary" class="x-large" @click="register">Register</v-btn>
                 </v-flex>
               </v-card-actions>
-            </v-card>
-            <v-alert type="error" dismissible v-model="showRegisterError" transition="scale-transition">
-              {{errorMessages}}
-            </v-alert>
 
+              <v-list color="error transparent" v-model="showRegisterError" transition="scale-transition">
+                <v-list-tile v-for="err in errorMessages" :key="err.name">
+                  <v-list-tile-action>
+                    <v-icon color="error">
+                      error
+                    </v-icon>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title v-text="err.description" class="deep-orange--text"></v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </v-list>
+            </v-card>
           </v-flex>
           <v-flex xs12 sm12 md5 lg6>
             <v-card class="elevation-1">
@@ -368,10 +342,7 @@
                 <v-form lazy-validation v-model="loginFormIsValid" ref="loginForm">
                   <v-text-field append-icon="person" label="Email" type="text" v-model="loginModel.email" required
                                 @keyup.native.enter="login"
-                                :rules="[v=>
-                    !!v || 'E-mail is required',
-                    v => /.+@.+/.test(v) || 'E-mail must be valid'
-                    ]">
+                                :rules="[rules.required, rules.email]">
                   </v-text-field>
                   <v-text-field append-icon="lock" label="Password" type="password" v-model="loginModel.password"
                                 required
@@ -393,7 +364,6 @@
     </section>
   </v-flex>
 </template>
-
 <script>
   import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 
@@ -406,7 +376,7 @@
         maxScrollbarLength: 160
       },
       countries: ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Antigua &amp; Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia &amp; Herzegovina', 'Botswana', 'Brazil', 'British Virgin Islands', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Cape Verde', 'Cayman Islands', 'Chad', 'Chile', 'China', 'Colombia', 'Congo', 'Cook Islands', 'Costa Rica', 'Cote D Ivoire', 'Croatia', 'Cruise Ship', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Estonia', 'Ethiopia', 'Falkland Islands', 'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Polynesia', 'French West Indies', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guam', 'Guatemala', 'Guernsey', 'Guinea', 'Guinea Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Isle of Man', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan', 'Kenya', 'Kuwait', 'Kyrgyz Republic', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Macau', 'Macedonia', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Mauritania', 'Mauritius', 'Mexico', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco', 'Mozambique', 'Namibia', 'Nepal', 'Netherlands', 'Netherlands Antilles', 'New Caledonia', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Norway', 'Oman', 'Pakistan', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Reunion', 'Romania', 'Russia', 'Rwanda', 'Saint Pierre &amp; Miquelon', 'Samoa', 'San Marino', 'Satellite', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'South Africa', 'South Korea', 'Spain', 'Sri Lanka', 'St Kitts &amp; Nevis', 'St Lucia', 'St Vincent', 'St. Lucia', 'Sudan', 'Suriname', 'Swaziland', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', "Timor L'Este", 'Togo', 'Tonga', 'Trinidad &amp; Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Turks &amp; Caicos', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Venezuela', 'Vietnam', 'Virgin Islands (US)', 'Yemen', 'Zambia', 'Zimbabwe'],
-      errorMessages: '',
+      errorMessages: [],
       email: null,
       name: null,
       surname: null,
@@ -425,12 +395,12 @@
       birthdatepicker: false,
       agreement: false,
       rules: {
-        required: value => !!value || 'Required.',
+        required: value => !!value || 'This field is required.',
         min: v => v && v.length >= 6 || 'Min 6 characters',
         passwordMatch: (v) => v == this.password || 'The passwords you entered don\'t match',
         email: value => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || 'Invalid e-mail.'
+          return pattern.test(value) || 'E-mail must be valid.'
         }
       },
       showRegisterError: false,
@@ -481,6 +451,8 @@
             (response) => {
               this.$myLocalStorage.setEnc('user', response.data.user);
               window.localStorage.setItem('token', response.data.token);
+              this.$store.dispatch('user/getAuthenticatedUser');
+
               this.$router.push(response.data.returnUrl)
             }
           ).catch(err => {
@@ -488,7 +460,7 @@
               this.showRegisterError = true
             } else if (err.response.status === 400) {
               this.showRegisterError = true;
-              this.errorMessages = err.response.data[0].description
+              this.errorMessages = err.response.data;
             } else {
               console.log(err)
             }
@@ -507,6 +479,8 @@
             (response) => {
               this.$myLocalStorage.setEnc('user', response.data.user);
               window.localStorage.setItem('token', response.data.token);
+              this.$store.dispatch('user/getAuthenticatedUser');
+
               this.$router.push(response.data.returnUrl)
             }
           ).catch(err => {
@@ -522,6 +496,7 @@
   }
 </script>
 <style lang="scss">
+
   .agreement-scroll-area {
     position: relative;
     margin: auto;

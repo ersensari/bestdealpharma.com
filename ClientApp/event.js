@@ -5,8 +5,9 @@ export default [
       this.axios.post('/account/logout').then(response => {
         window.localStorage.removeItem('user');
         window.localStorage.removeItem('token');
+        this.$store.dispatch('user/getAuthenticatedUser');
+
         this.$toastr('success', 'Logout successfully');
-        this.$router.replace({path: '/login'})
       })
     }
   },
@@ -55,6 +56,14 @@ export default [
     name: 'APP_SEARCH_DRUG',
     callback: function (searchText) {
       this.$router.push({name: 'product-search', params: {pSearchText: searchText}});
+    }
+  },
+  {
+    name: 'APP_CLEAR_CART',
+    callback: function () {
+      this.$cookies.remove('shopping-cart');
+      window.getApp.cartLength = 0;
+      window.getApp.cart = [];
     }
   },
   {

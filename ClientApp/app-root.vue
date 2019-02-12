@@ -1,98 +1,92 @@
 <template>
   <v-app>
     <nav-menu :drawer="drawer"></nav-menu>
-    <v-content>
+    <section>
       <v-container>
         <v-layout row>
-          <v-flex xs1>
+          <v-flex xs3>
             <a href="/">
-              <v-img src="/images/logo.png" width="180"/>
+              <v-img src="/images/logo.png"/>
             </a>
           </v-flex>
           <v-spacer></v-spacer>
-          <v-btn flat class="text-capitalize">
-            <fa-icon icon="sign-in-alt" class="mr-2" size="lg"/>
-            Login
-          </v-btn>
-          <v-btn flat class="text-capitalize" to="/register">
-            <v-icon class="mr-2">person_add</v-icon>
-            Create Account
-          </v-btn>
-
+          <user-partial></user-partial>
         </v-layout>
       </v-container>
-      <v-container>
-
-        <v-toolbar class="elevation-2" color="secondary" dark>
-          <v-toolbar-side-icon @click.stop="drawer = !drawer" class="hidden-lg-and-up"></v-toolbar-side-icon>
-          <v-toolbar-items class="hidden-md-and-down">
-            <v-btn flat v-for="link in routes.filter(x=>!x.hideOnMenu)" :to="link.path" :key="link.name">{{link.display
-              | capitalize}}
-            </v-btn>
-          </v-toolbar-items>
-          <v-spacer></v-spacer>
-          <v-text-field hide-details
-                        prepend-icon="search"
-                        v-model="searchText"
-                        @keyup.native.enter="onSearch"
-                        label="Search for your medications"></v-text-field>
-
-          <v-menu offset-y max-width="200">
-            <v-btn icon large class="mr-3" slot="activator">
-              <v-icon large color="lighten-1">keyboard</v-icon>
-            </v-btn>
-            <v-card>
-              <v-btn small icon v-for="(item, index) in alphabet"
-                     :key="index"
-                     @click="onSearchByLetter(item)">
-                {{item}}
+    </section>
+    <v-content>
+      <v-container fill-height>
+        <v-layout column>
+          <v-toolbar class="elevation-2 mb-3" color="secondary" dark>
+            <v-toolbar-side-icon @click.stop="drawer = !drawer" class="hidden-lg-and-up"></v-toolbar-side-icon>
+            <v-toolbar-items class="hidden-md-and-down">
+              <v-btn flat v-for="link in routes.filter(x=>!x.hideOnMenu)" :to="link.path" :key="link.name">
+                {{link.display
+                | capitalize}}
               </v-btn>
-            </v-card>
-          </v-menu>
+            </v-toolbar-items>
+            <v-spacer></v-spacer>
+            <v-text-field hide-details
+                          prepend-icon="search"
+                          v-model="searchText"
+                          @keyup.native.enter="onSearch"
+                          label="Search for your medications"></v-text-field>
 
-          <v-menu offset-y max-width="500">
-            <v-btn icon large slot="activator">
-              <v-fab-transition>
-                <v-badge left color="red">
-                  <span slot="badge">{{cartLength}}</span>
-                  <v-icon large
-                          color="lighten-1">
-                    shopping_cart
-                  </v-icon>
-                </v-badge>
-              </v-fab-transition>
-            </v-btn>
-            <v-card class="elevation-1">
-              <vue-perfect-scrollbar class="drawer-menu--scroll" :settings="scrollSettings">
-                <v-data-table
-                  :items="cart"
-                  hide-actions
-                  class="elevation-0"
-                >
-                  <template slot="headers" slot-scope="props">
-                    <th class="text-xs-left">Drug Name</th>
-                    <th>Quantity</th>
-                    <th>Strength</th>
-                    <th>Amount</th>
-                    <th class="text-xs-right">Price</th>
-                  </template>
-                  <template slot="items" slot-scope="props">
-                    <td class="text-xs-left">{{ props.item.product.title }}</td>
-                    <td class="text-xs-center">{{ props.item.product.quantity }}</td>
-                    <td class="text-xs-center">{{ props.item.product.strength }}</td>
-                    <td class="text-xs-center">{{ props.item.amount }}</td>
-                    <td class="text-xs-right">{{props.item.product.price*props.item.amount | currency}}</td>
-                  </template>
-                </v-data-table>
-              </vue-perfect-scrollbar>
-              <v-card-actions>
-                <v-btn flat dark class="deep-orange darken-2" to="/shopping-cart">SHOPPING CART</v-btn>
-              </v-card-actions>
+            <v-menu offset-y max-width="200">
+              <v-btn icon large class="mr-3" slot="activator">
+                <v-icon large color="lighten-1">keyboard</v-icon>
+              </v-btn>
+              <v-card>
+                <v-btn small icon v-for="(item, index) in alphabet"
+                       :key="index"
+                       @click="onSearchByLetter(item)">
+                  {{item}}
+                </v-btn>
+              </v-card>
+            </v-menu>
 
-            </v-card>
-          </v-menu>
-        </v-toolbar>
-        <v-layout class="mt-3">
+            <v-menu offset-y max-width="500">
+              <v-btn icon large slot="activator">
+                <v-fab-transition>
+                  <v-badge left color="red">
+                    <span slot="badge">{{cartLength}}</span>
+                    <v-icon large
+                            color="lighten-1">
+                      shopping_cart
+                    </v-icon>
+                  </v-badge>
+                </v-fab-transition>
+              </v-btn>
+              <v-card class="elevation-1">
+                <vue-perfect-scrollbar class="drawer-menu--scroll" :settings="scrollSettings">
+                  <v-data-table
+                    :items="cart"
+                    hide-actions
+                    class="elevation-0"
+                  >
+                    <template slot="headers" slot-scope="props">
+                      <th class="text-xs-left">Drug Name</th>
+                      <th>Quantity</th>
+                      <th>Strength</th>
+                      <th>Amount</th>
+                      <th class="text-xs-right">Price</th>
+                    </template>
+                    <template slot="items" slot-scope="props">
+                      <td class="text-xs-left">{{ props.item.product.title }}</td>
+                      <td class="text-xs-center">{{ props.item.product.quantity }}</td>
+                      <td class="text-xs-center">{{ props.item.product.strength }}</td>
+                      <td class="text-xs-center">{{ props.item.amount }}</td>
+                      <td class="text-xs-right">{{props.item.product.price*props.item.amount | currency}}</td>
+                    </template>
+                  </v-data-table>
+                </vue-perfect-scrollbar>
+                <v-card-actions>
+                  <v-btn flat dark class="deep-orange darken-2" to="/shopping-cart">SHOPPING CART</v-btn>
+                </v-card-actions>
+
+              </v-card>
+            </v-menu>
+          </v-toolbar>
           <router-view></router-view>
         </v-layout>
       </v-container>
@@ -108,8 +102,11 @@
   import NavMenu from './components/Partials/LeftMenuPartial'
   import AppFab from './components/Partials/AppFab'
   import AppBasket from './components/Partials/AppBasket'
+  import UserPartial from './components/Partials/UserPartial'
+
   import {routes} from './router/routes'
   import AppEvents from './event'
+
   import VuePerfectScrollbar from 'vue-perfect-scrollbar';
   import {mapState} from 'vuex'
 
@@ -118,7 +115,8 @@
       'nav-menu': NavMenu,
       'app-fab': AppFab,
       'app-basket': AppBasket,
-      'vue-perfect-scrollbar': VuePerfectScrollbar
+      'vue-perfect-scrollbar': VuePerfectScrollbar,
+      'user-partial': UserPartial
     },
     created() {
       this.$store.dispatch("links/GetLinkHierarchy");

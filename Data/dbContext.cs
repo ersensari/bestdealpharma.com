@@ -10,7 +10,9 @@ namespace bestdealpharma.com.Data
 {
   public class DbContext : IdentityDbContext
   {
-    public DbContext(DbContextOptions<DbContext> options) : base(options) { }
+    public DbContext(DbContextOptions<DbContext> options) : base(options)
+    {
+    }
 
     public DbSet<Person> People { get; set; }
     public DbSet<Page> Pages { get; set; }
@@ -25,5 +27,9 @@ namespace bestdealpharma.com.Data
     public DbSet<Currency> Currencies { get; set; }
     public DbSet<CurrencyRate> CurrencyRates { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<Address> Addresses { get; set; }
+    public DbSet<Prescription> Prescriptions { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderDetail> OrderDetails { get; set; }
   }
 }

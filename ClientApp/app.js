@@ -17,13 +17,11 @@ import VuejsDialog from 'vuejs-dialog'
 import VuetifyConfirm from 'vuetify-confirm'
 import VueToastr from '@deveodk/vue-toastr'
 import '@deveodk/vue-toastr/dist/@deveodk/vue-toastr.css'
-
+import moment from 'moment'
 import VueCookies from 'vue-cookies'
 
 
 import lodash from 'lodash'
-
-Vue.use(require('vue-moment'));
 
 Vue.use(VueCookies);
 
@@ -79,6 +77,11 @@ Vue.filter('currency', (value) => {
   let val = (value / 1).toFixed(2).replace('.', ',');
   return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
 });
+
+Vue.filter('formatdate', (value) => {
+  return moment(value).format('LL')
+});
+
 
 sync(store, router);
 

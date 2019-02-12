@@ -12,7 +12,6 @@
         </v-layout>
       </v-parallax>
     </section>
-
     <section>
       <v-layout column
                 wrap
@@ -70,7 +69,7 @@
                 <div class="text-xs-center">
                   <h2 class="headline">Notes of Importance</h2>
                   <span class="subheading">
-                      If your order contains prescription items, a valid prescription written by a medical practitioner licensed to practice in your area of residence is required. All prescriptions must be written in English. Once an order for a prescription medication has been placed, we require the Rx be faxed, emailed, uploaded via our site, or mailed to us. A mailed prescription can take up to 2 weeks to be received. Because of this, we recommend faxing, emailing or uploading your prescription. Please do not forward your prescription before placing an order. No changes or cancellations can be made to your prescription order once it has been placed.
+                    If your order contains prescription items, a valid prescription written by a medical practitioner licensed to practice in your area of residence is required. All prescriptions must be written in English. Once an order for a prescription medication has been placed, we require the Rx be faxed, emailed, uploaded via our site, or mailed to us. A mailed prescription can take up to 2 weeks to be received. Because of this, we recommend faxing, emailing or uploading your prescription. Please do not forward your prescription before placing an order. No changes or cancellations can be made to your prescription order once it has been placed.
                   </span>
                 </div>
               </v-flex>
@@ -83,6 +82,6 @@
 </template>
 <script>
   export default {
-    calculated: {}
+
   }
 </script>
