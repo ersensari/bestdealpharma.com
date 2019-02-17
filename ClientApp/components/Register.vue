@@ -56,7 +56,7 @@
                   <v-text-field ref="surname"
                                 v-model="surname"
                                 :rules="[() => !!surname || 'This field is required']"
-                                label="Surname"
+                                label="Lastname"
                                 required></v-text-field>
                   <v-menu :close-on-content-click="false"
                           v-model="birthdatepicker"
@@ -89,10 +89,7 @@
                                 label="Home Phone"
                                 hint="Optional"></v-text-field>
                   <v-text-field ref="address"
-                                :rules="[
-                                ()=>
-                    !!address || 'This field is required',
-                    () => !!address && address.length >= 25 || 'Address must be grater than 25 characters']"
+                                :rules="[()=>!!address || 'This field is required']"
                                 v-model="address"
                                 label="Address Line"
                                 counter="25"

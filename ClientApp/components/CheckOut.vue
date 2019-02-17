@@ -148,7 +148,7 @@
 
                 <v-container fluid grid-list-md>
                   <v-data-iterator
-                    :items="userAddresses"
+                    :items="allAddresses"
                     content-tag="v-layout"
                     hide-actions
                     row
@@ -332,10 +332,12 @@
       selectedAddress: null,
       selectedPrescription: null,
       fileUploadSuccess: false,
-      orderFinished: false
+      orderFinished: false,
+      allAddresses: []
     }),
     created() {
       this.cart = window.getApp.cart;
+      this.initializePage()
     },
     computed: {
       ...mapGetters('user', ['getAuthenticatedUserName', 'isAuthenticated', 'authenticatedUser', 'userAddresses']),
@@ -346,12 +348,19 @@
 
     watch: {
       authenticatedUser: function (value) {
-        this.$store.dispatch('user/getPersonAddresses', value.person.id);
-        this.$store.dispatch('orders/getPrescriptions')
+        this.initializePage()
       }
     },
 
     methods: {
+      initializePage() {
+        if (this.authenticatedUser) {
+          this.$store.dispatch('user/getPersonAddresses', this.authenticatedUser.person.id).then(response => {
+            this.allAddresses = response.data;
+          });
+          this.$store.dispatch('orders/getPrescriptions')
+        }
+      },
       calculateSubTotal() {
         return _.sumBy(this.cart, function (i) {
           return i.product.price * i.amount

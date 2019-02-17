@@ -30,10 +30,7 @@
               <v-flex xs12>
 
                 <v-text-field
-                  :rules="[
-                                          ()=>
-                                          !!addressModel.addressLine || 'This field is required',
-                                          () => !!addressModel.addressLine && addressModel.addressLine.length >= 25 || 'Address must be grater than 25 characters']"
+                  :rules="[()=>!!addressModel.addressLine || 'This field is required']"
                   v-model="addressModel.addressLine"
                   label="Address Line"
                   counter="25"
