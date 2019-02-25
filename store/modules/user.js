@@ -1,4 +1,3 @@
-import Addresses from "components/AccountPartials/Addresses";
 
 const baseApiUri = '/api/Authorization/';
 
@@ -35,9 +34,17 @@ const mutations = {
   setAddresses: (state, address) => {
     state.addresses = address;
   },
-  updateAddresses: (state, address) => {
+  addAddress: (state, address) => {
+    state.addresses.push(address);
+  },
+  updateAddress: (state, address) => {
     const i = state.addresses.findIndex(x => x.id === address.id);
     state.addresses[i] = address;
+  },
+  deleteAddress: (state, id) => {
+    _.remove(state.addresses, x => x.id === id);
+    // const index = state.addresses.findIndex(x => x.id === id);
+    // state.addresses = state.addresses.splice(index, 1);
   }
 
 };
@@ -84,11 +91,11 @@ const actions = {
         window
           .axios({
             method: 'post',
-            url: 'api/addresses',
+            url: '/api/addresses',
             data: payload
           })
           .then(response => {
-            commit('setAddresses', response.data);
+            commit('addAddress', response.data);
             resolve(response)
           })
           .catch(e => {
@@ -98,11 +105,11 @@ const actions = {
         window
           .axios({
             method: 'put',
-            url: 'api/addresses/' + payload.id,
+            url: '/api/addresses/' + payload.id,
             data: payload
           })
           .then(response => {
-            commit('updateAddresses', response.data);
+            commit('updateAddress', response.data);
             resolve(response)
           })
           .catch(e => {
@@ -111,6 +118,21 @@ const actions = {
       }
     })
   },
+  deleteAddress({commit}, id) {
+    if (id) {
+      window
+        .axios({
+          method: 'delete',
+          url: '/api/addresses/' + id
+        })
+        .then(response => {
+          commit('deleteAddress', id);
+        })
+        .catch(e => {
+          console.error(e);
+        })
+    }
+  }
 };
 
 export default {

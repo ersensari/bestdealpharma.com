@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using bestdealpharma.com.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Pages.Account.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
@@ -32,7 +33,7 @@ namespace bestdealpharma.com.Controllers
 
     private readonly Providers.IAuthenticatedPersonProvider _authPerson;
 
-    private readonly string[] AdminRoles = new string[] {"Admin", "Editor", "Call_Center"};
+    private readonly string[] AdminRoles = new string[] { "Admin", "Editor", "Call_Center" };
 
     public AccountController(
       UserManager<IdentityUser> userManager,
@@ -92,6 +93,59 @@ namespace bestdealpharma.com.Controllers
     {
       await _signInManager.SignOutAsync();
       return RedirectToAction("index", "home");
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    public async Task<IActionResult> SendRescueCode([FromBody]  UserModel model)
+    {
+      var user = await _userManager.FindByEmailAsync(model.Email);
+      if (user != null)
+      {
+        var token = GenerateJsonWebToken(user);
+
+        //todo : send mail
+
+        return Ok(new
+        {
+          token = token,
+          result = "success",
+          message = "Your rescue code has been send your email address."
+        });
+      }
+      else
+      {
+        return Ok(new
+        {
+          result = "error",
+          message = "Oops! Entered email address could not be verified!"
+        });
+      }
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> CreateNewPassword(string token)
+    {
+      var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+      if (jwt.ValidTo <= DateTime.Now && jwt.Issuer == _configuration["Jwt:Issuer"])
+      {
+        var email = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email).Value;
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user != null)
+        {
+          return Ok();
+        }
+        else
+        {
+          return BadRequest();
+        }
+      }
+      else
+      {
+        return BadRequest();
+      }
     }
 
     [HttpPost]

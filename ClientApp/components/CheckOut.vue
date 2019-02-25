@@ -97,8 +97,7 @@
                             <v-text-field
                               :rules="[
                                           ()=>
-                                          !!addressModel.addressLine || 'This field is required',
-                                          () => !!addressModel.addressLine && addressModel.addressLine.length >= 25 || 'Address must be grater than 25 characters']"
+                                          !!addressModel.addressLine || 'This field is required']"
                               v-model="addressModel.addressLine"
                               label="Address Line"
                               counter="25"
@@ -164,9 +163,9 @@
                     >
                       <v-card
                         :class="{'primary':selectedAddress!=null && selectedAddress.addressName===props.item.addressName}">
-                        <v-card-title>
+                        <v-card-title class="pa-0 ma-0">
                           <h4>
-                            <v-checkbox :label="props.item.addressName" class="pa-0 ma-0"
+                            <v-checkbox :label="props.item.addressName"
                                         :value="props.item" v-model="selectedAddress"></v-checkbox>
                           </h4>
                         </v-card-title>
@@ -255,7 +254,9 @@
                         varius. Vivamus tempus dui vitae libero rhoncus, vel cursus quam congue. Nam mattis neque et
                         augue ullamcorper viverra.
                       </v-subheader>
-                      <v-btn large class="deep-orange" dark @click="createOrder">Create Order</v-btn>
+                      <v-btn large depressed class="deep-orange" dark @click="createOrder">
+                        <img src="/images/paypal.png"></img>
+                      </v-btn>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -285,6 +286,8 @@
         justify-center
         align-center
         fill-height
+        grid-list-md
+        row
       >
         <v-flex text-xs-center>
           <div class="display-1">Thank you for choosing us!</div>
@@ -295,6 +298,8 @@
             augue ullamcorper viverra.
           </v-subheader>
           <v-btn large class="deep-orange" dark to="/new-order">Create New Order</v-btn>
+          <br/>
+          <br/>
         </v-flex>
       </v-layout>
     </v-container>
@@ -314,7 +319,7 @@
 
     data: () => ({
       e1: 0,
-      countries: ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Antigua &amp; Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia &amp; Herzegovina', 'Botswana', 'Brazil', 'British Virgin Islands', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Cape Verde', 'Cayman Islands', 'Chad', 'Chile', 'China', 'Colombia', 'Congo', 'Cook Islands', 'Costa Rica', 'Cote D Ivoire', 'Croatia', 'Cruise Ship', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Estonia', 'Ethiopia', 'Falkland Islands', 'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Polynesia', 'French West Indies', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guam', 'Guatemala', 'Guernsey', 'Guinea', 'Guinea Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Isle of Man', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan', 'Kenya', 'Kuwait', 'Kyrgyz Republic', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Macau', 'Macedonia', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Mauritania', 'Mauritius', 'Mexico', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco', 'Mozambique', 'Namibia', 'Nepal', 'Netherlands', 'Netherlands Antilles', 'New Caledonia', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Norway', 'Oman', 'Pakistan', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Reunion', 'Romania', 'Russia', 'Rwanda', 'Saint Pierre &amp; Miquelon', 'Samoa', 'San Marino', 'Satellite', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'South Africa', 'South Korea', 'Spain', 'Sri Lanka', 'St Kitts &amp; Nevis', 'St Lucia', 'St Vincent', 'St. Lucia', 'Sudan', 'Suriname', 'Swaziland', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', "Timor L'Este", 'Togo', 'Tonga', 'Trinidad &amp; Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Turks &amp; Caicos', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Venezuela', 'Vietnam', 'Virgin Islands (US)', 'Yemen', 'Zambia', 'Zimbabwe'],
+      countries: ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Antigua &amp; Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia Herzegovina', 'Botswana', 'Brazil', 'British Virgin Islands', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Cape Verde', 'Cayman Islands', 'Chad', 'Chile', 'China', 'Colombia', 'Congo', 'Cook Islands', 'Costa Rica', 'Cote D Ivoire', 'Croatia', 'Cruise Ship', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Estonia', 'Ethiopia', 'Falkland Islands', 'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Polynesia', 'French West Indies', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guam', 'Guatemala', 'Guernsey', 'Guinea', 'Guinea Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Isle of Man', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan', 'Kenya', 'Kuwait', 'Kyrgyz Republic', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Macau', 'Macedonia', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Mauritania', 'Mauritius', 'Mexico', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco', 'Mozambique', 'Namibia', 'Nepal', 'Netherlands', 'Netherlands Antilles', 'New Caledonia', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Norway', 'Oman', 'Pakistan', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Reunion', 'Romania', 'Russia', 'Rwanda', 'Saint Pierre &amp; Miquelon', 'Samoa', 'San Marino', 'Satellite', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'South Africa', 'South Korea', 'Spain', 'Sri Lanka', 'St Kitts &amp; Nevis', 'St Lucia', 'St Vincent', 'St. Lucia', 'Sudan', 'Suriname', 'Swaziland', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', "Timor L'Este", 'Togo', 'Tonga', 'Trinidad &amp; Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Turks &amp; Caicos', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Venezuela', 'Vietnam', 'Virgin Islands (US)', 'Yemen', 'Zambia', 'Zimbabwe'],
       addressModel: {
         id: 0,
         addressName: null,
@@ -368,10 +373,12 @@
       },
       saveAddress() {
         if (this.$refs.addressForm.validate()) {
+          this.selectedAddress = null;
           this.addressModel.personId = this.authenticatedUser.person.id;
           this.$store.dispatch('user/saveAddress', this.addressModel)
             .then(response => {
               this.dialog = false;
+              this.initializePage();
             });
         }
       },
@@ -385,7 +392,7 @@
       createOrder() {
         const model = {
           id: 0,
-          orderNumber: 1,
+          orderNumber: moment().valueOf().toString(),
           orderDate: moment().format('YYYY-MM-DD HH:mm'),
           mobilePhone: this.selectedAddress.mobilePhone,
           zipCode: this.selectedAddress.zipCode,
@@ -421,8 +428,23 @@
         };
         this.$store.dispatch('orders/createOrder', model).then(response => {
           this.orderFinished = true;
-          window.getApp.$emit('APP_CLEAR_CART')
-        })
+          window.getApp.$emit('APP_CLEAR_CART');
+          const paypallnk="https://www.paypal.com/cgi-bin/webscr?cmd=_ext-enter&redirect_cmd=_xclick&first_name="
+            + this.authenticatedUser.person.name
+            + "&last_name="
+            + this.authenticatedUser.surname
+            + "&business=accounting@amerikadanhemenal.com&amount="
+            + model.total
+            + "&currency_code=USD&item_name=Odeme&item_number="
+            + model.orderNumber
+            + "&quantity="
+            + this.cart.length
+            + "&item_name=Payment for bestdealpharma.com #" + model.orderNumber
+            + "&shipping="
+            + model.shipping
+            + "&no_shipping=0&pbtype=product";
+          window.open(paypallnk);
+      })
       }
     }
   }

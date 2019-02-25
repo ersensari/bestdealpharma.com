@@ -40,6 +40,7 @@
                 </v-alert>
               </v-card-text>
               <v-card-actions>
+                <a href="/rescue-password">Did you forget your password?</a>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" @click="login" :loading="loginLoading">Login</v-btn>
               </v-card-actions>
