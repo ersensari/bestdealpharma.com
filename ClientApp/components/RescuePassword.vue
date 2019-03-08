@@ -34,7 +34,7 @@
         </v-layout>
       </v-container>
     </section>
-  </v-flex>
+  </v-flex> 
 </template>
 <script>
   export default {

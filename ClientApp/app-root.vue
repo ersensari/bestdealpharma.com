@@ -44,7 +44,6 @@
                 </v-btn>
               </v-card>
             </v-menu>
-
             <v-menu offset-y max-width="500">
               <v-btn icon large slot="activator">
                 <v-fab-transition>
@@ -107,8 +106,8 @@
   import {routes} from './router/routes'
   import AppEvents from './event'
 
-  import VuePerfectScrollbar from 'vue-perfect-scrollbar';
-  import {mapState} from 'vuex'
+  import VuePerfectScrollbar from 'vue-perfect-scrollbar'
+import {mapState} from 'vuex'
 
   export default {
     components: {
@@ -118,26 +117,26 @@
       'vue-perfect-scrollbar': VuePerfectScrollbar,
       'user-partial': UserPartial
     },
-    created() {
-      this.$store.dispatch("links/GetLinkHierarchy");
+    created () {
+      this.$store.dispatch('links/GetLinkHierarchy')
       AppEvents.forEach(item => {
-        this.$on(item.name, item.callback);
-      });
+        this.$on(item.name, item.callback)
+      })
 
-      window.getApp = this;
+      window.getApp = this
 
-      this.cartLength = this.cart.length;
+      this.cartLength = this.cart.length
 
-      let cartCipherText = this.$cookies.get('shopping-cart');
+      let cartCipherText = this.$cookies.get('shopping-cart')
       if (cartCipherText) {
-        this.cart = this.$myUtil.decrypt(cartCipherText);
-        this.cartLength = this.cart.length;
+        this.cart = this.$myUtil.decrypt(cartCipherText)
+        this.cartLength = this.cart.length
       }
     },
     computed: {
       ...mapState({
         links: state => state.links.allHierarchical
-      }),
+      })
     },
     data: () => ({
       scrollSettings: {
