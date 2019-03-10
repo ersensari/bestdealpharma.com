@@ -4,7 +4,7 @@
     <section>
       <v-container>
         <v-layout row>
-          <v-flex xs3>
+          <v-flex xs6 md3>
             <a href="/">
               <v-img src="/images/logo.png"/>
             </a>

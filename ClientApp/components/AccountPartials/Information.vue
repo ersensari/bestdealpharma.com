@@ -55,7 +55,7 @@
             </div>
           </v-card-title>
 
-          <v-flex class="xs6 pa-3">
+          <v-flex class="xs12 sm12 md6 pa-3">
             <v-text-field ref="currentPassword"
                           v-model="model.currentPassword"
                           :append-icon="showpwd1 ? 'visibility_off' : 'visibility'"

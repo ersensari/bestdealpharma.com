@@ -82,6 +82,16 @@ Vue.filter('formatdate', (value) => {
   return moment(value).format('LL')
 });
 
+Vue.filter('formatStatus', (value) => {
+  switch (value) {
+    case 0:
+      return 'Waiting Payment';
+    case 1:
+      return 'Preparing';
+    case 2:
+      return 'Shipped';
+  }
+});
 
 sync(store, router);
 

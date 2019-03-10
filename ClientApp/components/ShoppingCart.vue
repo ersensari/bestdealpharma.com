@@ -63,17 +63,19 @@
                   <h3>{{calculateSubTotal() | currency}}</h3>
                 </v-flex>
 
-                <v-flex xs4 text-xs-right>
+                <v-flex xs4 text-xs-right class="align-self-center">
                   <h3>Shipping:</h3>
                 </v-flex>
                 <v-flex xs8>
-                  <h3>{{shipping | currency}}</h3>
+                  <v-select dense :items="shippingItems" v-model="shipping" :return-object="true"
+                            hint="Please select shipping method!" persistent-hint>
+                  </v-select>
                 </v-flex>
                 <v-flex xs4 text-xs-right>
                   <h1>Total:</h1>
                 </v-flex>
                 <v-flex xs8>
-                  <h1 class="deep-orange--text">{{calculateSubTotal() + shipping | currency}}</h1>
+                  <h1 class="deep-orange--text">{{calculateGrandTotal()| currency}}</h1>
                 </v-flex>
 
               </v-layout>
@@ -81,7 +83,9 @@
 
             <v-card-actions>
               <v-flex class="text-xs-right">
-                <v-btn class="deep-orange darken-3" dark to="/checkout"><b>CHECKOUT</b></v-btn>
+                <v-btn class="darken-3 deep-orange white--text" @click="goCheckout"
+                       :disabled="shipping==null"><b>CHECKOUT</b>
+                </v-btn>
               </v-flex>
             </v-card-actions>
           </v-card>
@@ -92,21 +96,41 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex'
+
   export default {
     data() {
       return {
         cart: [],
-        shipping: 0
+        shipping: null
       }
     },
+    computed: {
+      ...mapState({
+        shippingItems: state => state.shippings.all
+      })
+    },
+
     created() {
       this.cart = window.getApp.cart;
+      this.$store.dispatch('shippings/getAll')
+
     },
     methods: {
       calculateSubTotal: function () {
         return _.sumBy(this.cart, function (i) {
           return i.product.price * i.amount
         })
+      },
+      calculateGrandTotal: function () {
+        if (this.shipping != null) {
+          const subtotal = _.sumBy(this.cart, function (i) {
+            return i.product.price * i.amount
+          });
+          return subtotal + this.shipping.price;
+        } else {
+          return 'Please select shipping method'
+        }
       },
       increase: function (item) {
         item.amount++;
@@ -124,6 +148,10 @@
         this.$cookies.set('shopping-cart', this.$myUtil.encrypt(this.cart), '7d');
         window.getApp.cartLength = this.cart.length;
 
+      },
+      goCheckout: function () {
+        const shippingid = this.shipping.id;
+        this.$router.push({name: 'checkout', params: {shippingId: shippingid}})
       }
 
     }

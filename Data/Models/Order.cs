@@ -8,7 +8,7 @@ namespace bestdealpharma.com.Data.Models
   public class Order
   {
     public int Id { get; set; }
-    public string  OrderNumber { get; set; }
+    public string OrderNumber { get; set; }
     public DateTime OrderDate { get; set; }
     public string MobilePhone { get; set; }
     public string ZipCode { get; set; }
@@ -18,6 +18,7 @@ namespace bestdealpharma.com.Data.Models
     public string AddressLine { get; set; }
     public decimal SubTotal { get; set; }
     public decimal Shipping { get; set; }
+    public string ShippingMethod { get; set; }
     public decimal Total { get; set; }
 
     [ForeignKey("Person")] public int PersonId { get; set; }

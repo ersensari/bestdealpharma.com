@@ -41,12 +41,12 @@
           </tr>
           <tr>
             <td colspan="3" class="text-xs-right"><h3>Shipping</h3></td>
-            <td colspan="2" class="text-xs-right"><h3>{{shipping | currency}}</h3>
+            <td colspan="2" class="text-xs-right"><h3>{{shippingPrice | currency}}</h3>
             </td>
           </tr>
           <tr>
             <td colspan="3" class="text-xs-right"><h3>Total Price</h3></td>
-            <td colspan="2" class="text-xs-right"><h2 class="deep-orange--text">{{calculateSubTotal() + shipping |
+            <td colspan="2" class="text-xs-right"><h2 class="deep-orange--text">{{calculateSubTotal() + shippingPrice |
               currency}}</h2>
             </td>
           </tr>
@@ -333,7 +333,8 @@
       },
       dialog: false,
       cart: [],
-      shipping: 0,
+      shippingPrice: null,
+      shippingMethod: null,
       selectedAddress: null,
       selectedPrescription: null,
       fileUploadSuccess: false,
@@ -341,19 +342,28 @@
       allAddresses: []
     }),
     created() {
+      if (!this.$route.params.shippingId) {
+        this.$router.push({name: 'shopping-cart'});
+      }
       this.cart = window.getApp.cart;
       this.initializePage()
     },
     computed: {
       ...mapGetters('user', ['getAuthenticatedUserName', 'isAuthenticated', 'authenticatedUser', 'userAddresses']),
       ...mapState({
-        prescriptions: state => state.orders.prescriptions
+        prescriptions: state => state.orders.prescriptions,
+        shippingItems: state => state.shippings.all
       })
     },
 
     watch: {
       authenticatedUser: function (value) {
         this.initializePage()
+      },
+      shippingItems: function (value) {
+        const shipping = value.find(x => x.id === this.$route.params.shippingId);
+        this.shippingPrice = shipping.price;
+        this.shippingMethod = shipping;
       }
     },
 
@@ -363,7 +373,8 @@
           this.$store.dispatch('user/getPersonAddresses', this.authenticatedUser.person.id).then(response => {
             this.allAddresses = response.data;
           });
-          this.$store.dispatch('orders/getPrescriptions')
+          this.$store.dispatch('orders/getPrescriptions');
+          this.$store.dispatch('shippings/getAll');
         }
       },
       calculateSubTotal() {
@@ -403,10 +414,11 @@
           subTotal: _.sumBy(this.cart, function (i) {
             return i.product.price * i.amount
           }),
-          shipping: this.shipping,
+          shipping: this.shippingMethod.price,
+          shippingMethod: this.shippingMethod.text,
           total: _.sumBy(this.cart, function (i) {
             return i.product.price * i.amount
-          }) + this.shipping,
+          }) + this.shippingMethod.price,
           status: 0,
           orderDetails: this.cart.map(x => {
             return {
@@ -429,7 +441,7 @@
         this.$store.dispatch('orders/createOrder', model).then(response => {
           this.orderFinished = true;
           window.getApp.$emit('APP_CLEAR_CART');
-          const paypallnk="https://www.paypal.com/cgi-bin/webscr?cmd=_ext-enter&redirect_cmd=_xclick&first_name="
+          const paypallnk = "https://www.paypal.com/cgi-bin/webscr?cmd=_ext-enter&redirect_cmd=_xclick&first_name="
             + this.authenticatedUser.person.name
             + "&last_name="
             + this.authenticatedUser.surname
@@ -444,7 +456,7 @@
             + model.shipping
             + "&no_shipping=0&pbtype=product";
           window.open(paypallnk);
-      })
+        })
       }
     }
   }

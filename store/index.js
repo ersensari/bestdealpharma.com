@@ -6,8 +6,9 @@ import pages from './modules/pages'
 import products from './modules/products'
 import members from './modules/members'
 import orders from './modules/orders'
+import shippings from './modules/shipping'
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
@@ -16,7 +17,8 @@ export default new Vuex.Store({
     pages,
     products,
     members,
-    orders
+    orders,
+    shippings
   },
   strict: false
 })
