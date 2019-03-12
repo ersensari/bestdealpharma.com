@@ -23,7 +23,7 @@ router.beforeEach((to, from, next) => {
     } else {
       let user = window.$myLocalStorage.getEnc('user');
       if (to.matched.some(record => record.meta.is_admin)) {
-        if (user.roles && user.roles.filter(x => x.name == 'Admin').length > 0) {
+        if (user.roles && user.roles.filter(x => x.name === 'Admin').length > 0) {
           next()
         } else {
           next({ name: 'AccessDenied' })
@@ -36,7 +36,7 @@ router.beforeEach((to, from, next) => {
     if (!window.localStorage.getItem('token')) {
       next()
     } else {
-      next({ name: '/' })
+      next({ name: '/admin' })
     }
   } else {
     next()

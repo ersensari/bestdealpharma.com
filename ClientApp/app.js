@@ -90,6 +90,9 @@ Vue.filter('formatStatus', (value) => {
       return 'Preparing';
     case 2:
       return 'Shipped';
+    case 3:
+      return 'Canceled';
+
   }
 });
 

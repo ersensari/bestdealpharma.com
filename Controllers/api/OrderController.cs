@@ -100,5 +100,17 @@ namespace bestdealpharma.com.Controllers.Api
       return Ok(await _context.Orders.Include(x => x.OrderDetails).Where(x => x.PersonId == authMember.Person.Id)
         .ToListAsync());
     }
+
+    [HttpGet]
+    [Route("api/order/getAllOrders")]
+    [Authorize(Roles = "Admin, Editor")]
+    public async Task<IActionResult> GetAllOrders(int status)
+    {
+      return Ok(await _context.Orders
+        .Include(x => x.OrderDetails)
+        .Include(x=>x.Person)
+        .Include(x=>x.Prescription)
+        .Where(x => x.Status == status).ToListAsync());
+    }
   }
 }

@@ -8,7 +8,7 @@
               <v-toolbar flat color="white">
                 <v-text-field flat prepend-icon="search" label="Search" v-model="searchField"></v-text-field>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" dark class="mb-2" @click="onNew">New Page</v-btn>
+                <v-btn color="primary" dark class="mb-2" @click="onNew">New <Product></Product></v-btn>
               </v-toolbar>
               <v-data-table
                 :headers="headers"

@@ -33,7 +33,7 @@ namespace bestdealpharma.com.Controllers
 
     private readonly Providers.IAuthenticatedPersonProvider _authPerson;
 
-    private readonly string[] AdminRoles = new string[] { "Admin", "Editor", "Call_Center" };
+    private readonly string[] AdminRoles = new string[] {"Admin", "Editor", "Call_Center"};
 
     public AccountController(
       UserManager<IdentityUser> userManager,
@@ -68,7 +68,8 @@ namespace bestdealpharma.com.Controllers
           Email = login.Email
         };
 
-        var roles = await _userManager.GetRolesAsync(identifier);
+
+        var roles = await _userManager.GetRolesAsync(await _userManager.FindByEmailAsync(identifier.Email));
         if (login.forAdminPanel.GetValueOrDefault()
             && !roles.Any(x => AdminRoles.Contains(x)))
         {
@@ -97,7 +98,7 @@ namespace bestdealpharma.com.Controllers
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<IActionResult> SendRescueCode([FromBody]  UserModel model)
+    public async Task<IActionResult> SendRescueCode([FromBody] UserModel model)
     {
       var user = await _userManager.FindByEmailAsync(model.Email);
       if (user != null)

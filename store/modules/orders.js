@@ -53,7 +53,20 @@ const actions = {
         })
     })
   },
-
+  getAllForAdmin({commit}, status) {
+    return new Promise((resolve, reject) => {
+      window.axios
+        .get(apiPath + 'getAllOrders?status=' + status)
+        .then(response => {
+          commit('setItems', response.data);
+          resolve(response)
+        })
+        .catch(e => {
+          commit('setErrors', e);
+          reject(e)
+        })
+    })
+  },
   onSave({commit}, payload) {
     return new Promise((resolve, reject) => {
       if (payload.id === 0) {

@@ -22,6 +22,9 @@ import '@deveodk/vue-toastr/dist/@deveodk/vue-toastr.css'
 // import colors from 'vuetify/es5/util/colors'
 
 import GlobalProperties from 'plugins/globalProperties'
+import moment from 'moment'
+import lodash from 'lodash'
+
 
 Vue.use(GlobalProperties);
 
@@ -77,6 +80,28 @@ Vue.use(Vuetify, {
   }
 });
 
+Vue.filter('currency', (value) => {
+  let val = (value / 1).toFixed(2).replace('.', ',');
+  return '$' + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+});
+
+Vue.filter('formatdate', (value) => {
+  return moment(value).format('LL')
+});
+
+Vue.filter('formatStatus', (value) => {
+  switch (value) {
+    case 0:
+      return 'Waiting Payment';
+    case 1:
+      return 'Preparing';
+    case 2:
+      return 'Shipped';
+    case 3:
+      return 'Canceled';
+
+  }
+});
 Vue.use(axiosPlugin, {showSpinner: true, useProgress: true});
 Vue.use(myLocalStorage);
 sync(store, router);
