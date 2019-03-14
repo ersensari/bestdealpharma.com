@@ -49,9 +49,18 @@
             <v-layout row wrap v-if="selected">
               <v-flex xs12 py-2 pr-2>
                 <v-card class="elevation-0">
+                  <v-select dense :items="orderStatuses" v-model="selected.status" class="mr-2 ml-2"
+                            hint="Change Order Status!" persistent-hint>
+                  </v-select>
+                  <v-textarea class="ml-2 mr-2" v-model="selected.shippingLink" label="Shipping Trace Link"
+                              v-if="selected.status==2"></v-textarea>
+                  <v-textarea class="ml-2 mr-2" v-model="selected.serviceExplanation" label="Explanation"></v-textarea>
+                  <v-textarea class="ml-2 mr-2" v-model="selected.customerExplanation" disabled
+                              label="Order Explanation"></v-textarea>
                   <v-card-text>
                     <v-icon>location_on</v-icon>
-                    {{selected.addressLine}}, {{selected.zipCode}}, {{selected.city}}, {{selected.state}}, {{selected.country}}
+                    {{selected.addressLine}}, {{selected.zipCode}}, {{selected.city}}, {{selected.state}},
+                    {{selected.country}}
                     <v-icon>phone</v-icon>
                     {{selected.mobilePhone}}
                   </v-card-text>
@@ -161,6 +170,9 @@
           return i.price * i.amount
         })
       },
+      onSave:function () {
+
+      }
     }
 
   }

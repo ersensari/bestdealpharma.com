@@ -20,7 +20,9 @@ namespace bestdealpharma.com.Data.Models
     public decimal Shipping { get; set; }
     public string ShippingMethod { get; set; }
     public decimal Total { get; set; }
-
+    public string CustomerExplanation { get; set; }
+    public string ServiceExplanation { get; set; }
+    public string ShippingLink { get; set; }
     [ForeignKey("Person")] public int PersonId { get; set; }
     [ForeignKey("Prescription")] public int PrescriptionId { get; set; }
 

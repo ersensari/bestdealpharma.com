@@ -248,6 +248,7 @@
                   >
                     <v-flex text-xs-center>
                       <div class="display-1">Thank you for choosing us!</div>
+                      <v-textarea v-model="customerExplanation" label="Order Explanation"></v-textarea>
                       <v-subheader>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ullamcorper vel diam eu vulputate.
                         Aliquam vestibulum felis sit amet tincidunt consectetur. Aenean tristique nulla at nisl mattis
@@ -339,6 +340,7 @@
       selectedPrescription: null,
       fileUploadSuccess: false,
       orderFinished: false,
+      customerExplanation: '',
       allAddresses: []
     }),
     created() {
@@ -411,6 +413,7 @@
           city: this.selectedAddress.city,
           country: this.selectedAddress.country,
           addressLine: this.selectedAddress.addressLine,
+          customerExplanation: this.customerExplanation,
           subTotal: _.sumBy(this.cart, function (i) {
             return i.product.price * i.amount
           }),
