@@ -23,12 +23,9 @@ namespace bestdealpharma.com.Data.Models
     public string CustomerExplanation { get; set; }
     public string ServiceExplanation { get; set; }
     public string ShippingLink { get; set; }
+    public int Status { get; set; }
     [ForeignKey("Person")] public int PersonId { get; set; }
     [ForeignKey("Prescription")] public int PrescriptionId { get; set; }
-
-    public int Status { get; set; }
-
-
     public Person Person { get; set; }
     public Prescription Prescription { get; set; }
 

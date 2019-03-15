@@ -86,6 +86,14 @@
                 </v-flex>
                 <v-flex sm12>
                   <v-text-field
+                    v-model="selected.dispensedFrom"
+                    :rules="[v => !!v || 'Dispensed From is required']"
+                    label="Dispensed From"
+                    required
+                  ></v-text-field>
+                </v-flex>
+                <v-flex sm12>
+                  <v-text-field
                     v-model="selected.quantity"
                     :rules="[v => !!v || 'Quantity is required']"
                     label="Quantity"
@@ -177,12 +185,14 @@ export default {
       this.selected = item;
     },
     onSave() {
-      this.$store
-        .dispatch(storeNamespace + "onSave", this.selected)
-        .then(response => {
-          this.selected = response.data;
-          this.isNew = false;
-        });
+      if (formValid) {
+        this.$store
+          .dispatch(storeNamespace + "onSave", this.selected)
+          .then(response => {
+            this.selected = response.data;
+            this.isNew = false;
+          });
+      }
     },
     onDelete() {
       if (this.selected) {

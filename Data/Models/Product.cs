@@ -17,6 +17,6 @@ namespace bestdealpharma.com.Data.Models
     public bool IsGeneric { get; set; }
     public bool OnlyRx { get; set; }
     public bool IsAvailable { get; set; }
-
+    public string DispensedFrom { get; set; }
   }
 }
