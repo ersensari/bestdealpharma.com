@@ -129,9 +129,17 @@
                         <v-list>
                           <v-list-tile>
                             <v-list-tile-avatar>
-                              <v-icon>phone</v-icon>
+                              <v-icon>phonelink_ring</v-icon>
                             </v-list-tile-avatar>
                             {{selected.mobilePhone}}
+                          </v-list-tile>
+                        </v-list>
+                        <v-list>
+                          <v-list-tile>
+                            <v-list-tile-avatar>
+                              <v-icon>alternate_email</v-icon>
+                            </v-list-tile-avatar>
+                            {{selected.person.user.email}}
                           </v-list-tile>
                         </v-list>
                       </v-flex>

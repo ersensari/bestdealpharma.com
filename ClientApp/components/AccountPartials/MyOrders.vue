@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card>
     <v-card-title>
       <div class="headline">
@@ -14,13 +14,24 @@
             <v-expansion-panel-content v-for="item in orders" :key="item.id">
               <template slot="header">
                 <v-layout row wrap>
-                  <v-flex xs6 md4>
+                  <v-flex xs5 md3>
                     <h4>{{item.orderDate | formatdate}}</h4></v-flex>
                   <v-spacer></v-spacer>
                   <v-flex md4 class="hidden-sm-and-down">
                     <h4>#{{item.orderNumber}}</h4></v-flex>
                   <v-flex md2 class="hidden-sm-and-down"><b class="pr-2">Total:</b>${{item.total}}</v-flex>
                   <v-flex xs6 md2><h4>{{item.status | formatStatus}}</h4></v-flex>
+                  <v-flex xs1 md1 v-if="item.status==0">
+                    [<a href="javascript:void(0)" @click="cancelOrder(item.id)" title="Cancel Order">
+                    Cancel
+                  </a>]
+                  </v-flex>
+                  <v-flex xs1 md1 v-if="item.status==3 || item.status==2">
+                    [<a href="javascript:void(0)" @click="archiveOrder(item.id)" title="Move To Archive">
+                    Archive
+                  </a>]
+                  </v-flex>
+
                 </v-layout>
               </template>
               <section>
@@ -28,6 +39,7 @@
                   <v-flex xs12 py-2 pr-2>
                     <v-card class="elevation-0">
                       <v-card-text>
+                        <p v-if="item.shippingLink"><a :href="item.shippingLink" target="_blank">Trace Shipping</a></p>
                         <v-icon>location_on</v-icon>
                         {{item.addressLine}}, {{item.zipCode}}, {{item.city}}, {{item.state}}, {{item.country}}
                         <v-icon>phone</v-icon>
@@ -101,10 +113,17 @@
   import {mapGetters, mapState} from 'vuex'
 
   export default {
+    components: {},
+
     computed: {
       ...mapGetters('user', ['getAuthenticatedUserName', 'isAuthenticated', 'authenticatedUser']),
       ...mapState({
-        orders: state => state.orders.all
+        orders: state => {
+          if (state.orders.all) {
+            return state.orders.all.filter(x => !x.archived)
+          } else
+            return [];
+        }
       })
     },
     created() {
@@ -116,6 +135,34 @@
           return i.price * i.amount
         })
       },
+      cancelOrder: function (id) {
+        this.$confirm('Do you really want to cancel this order?', {title: 'Warning'}).then(res => {
+          if (res) {
+            this.$store.dispatch("orders/onCancel", id).then(response => {
+              const order = this.orders.find((x) => {
+                return x.id === id
+              });
+              order.status = 3;
+            }).catch(e => {
+              console.error(e)
+            })
+          }
+        })
+      },
+      archiveOrder: function (id) {
+        this.$confirm('Do you really want to move this order?', {title: 'Warning'}).then(res => {
+          if (res) {
+            this.$store.dispatch("orders/onArchived", id).then(response => {
+              const order = this.orders.find((x) => {
+                return x.id === id
+              });
+              order.archived = 1;
+            }).catch(e => {
+              console.error(e)
+            })
+          }
+        })
+      }
     }
   }
 </script>

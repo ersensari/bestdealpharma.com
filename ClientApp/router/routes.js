@@ -15,6 +15,7 @@ import Addresses from 'components/AccountPartials/Addresses'
 import CheckOut from 'components/CheckOut'
 import Login from 'components/Login'
 import RescuePassword from 'components/RescuePassword'
+import ArchivedOrders from "components/AccountPartials/ArchivedOrders";
 
 export const routes = [
   { name: 'home', path: '/', component: HomePage, display: 'Home', icon: 'home', meta: { requiresAuth: false } },
@@ -115,6 +116,14 @@ export const routes = [
         display: 'My Orders',
         meta: { requiresAuth: true }
       },
+      {
+        name: 'account_archivedorders',
+        path: '/account/archived-orders',
+        component: ArchivedOrders,
+        display: 'Archived Orders',
+        meta: { requiresAuth: true }
+      },
+
       {
         name: 'account_orderrefill',
         path: '/account/order-refill',

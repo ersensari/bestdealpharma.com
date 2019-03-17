@@ -39,6 +39,15 @@
                   <v-list-tile-title>Order Refill</v-list-tile-title>
                 </v-list-tile-content>
               </v-list-tile>
+              <v-list-tile @click="$router.push({name:'account_archivedorders'})">
+                <v-list-tile-action>
+                  <v-icon>archive</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content class="hidden-sm-and-down">
+                  <v-list-tile-title>Archived Orders</v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+
               <v-list-tile @click="$router.push({name:'account_addresses'})">
                 <v-list-tile-action>
                   <v-icon>location_on</v-icon>

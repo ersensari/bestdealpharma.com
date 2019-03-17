@@ -98,6 +98,7 @@ namespace bestdealpharma.com.Controllers.Api
       var authMember = _authPerson.GetAuthenticatedUser(string.Empty);
 
       return Ok(await _context.Orders.Include(x => x.OrderDetails).Where(x => x.PersonId == authMember.Person.Id)
+        .OrderBy(x => x.Status)
         .ToListAsync());
     }
 
@@ -108,9 +109,48 @@ namespace bestdealpharma.com.Controllers.Api
     {
       return Ok(await _context.Orders
         .Include(x => x.OrderDetails)
-        .Include(x=>x.Person)
-        .Include(x=>x.Prescription)
-        .Where(x => x.Status == status).ToListAsync());
+        .Include(x => x.Person)
+        .ThenInclude(x => x.User)
+        .Include(x => x.Prescription)
+        .Where(x => x.Status == status)
+        .OrderBy(x => x.OrderDate)
+        .ToListAsync());
+    }
+
+    [HttpPost]
+    [Route("api/order/cancelOrder/{id}")]
+    public async Task<IActionResult> CancelOrder(int id)
+    {
+      var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == id);
+      var authMember = _authPerson.GetAuthenticatedUser(string.Empty);
+      if (order != null && order.PersonId == authMember.Person.Id)
+      {
+        order.Status = 3;
+        await _context.SaveChangesAsync();
+        return Ok(order);
+      }
+      else
+      {
+        return BadRequest();
+      }
+    }
+
+    [HttpPost]
+    [Route("api/order/archiveOrder/{id}")]
+    public async Task<IActionResult> ArchiveOrder(int id)
+    {
+      var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == id);
+      var authMember = _authPerson.GetAuthenticatedUser(string.Empty);
+      if (order != null && order.PersonId == authMember.Person.Id)
+      {
+        order.Archived = true;
+        await _context.SaveChangesAsync();
+        return Ok(order);
+      }
+      else
+      {
+        return BadRequest();
+      }
     }
 
     // PUT: api/Orders/5
@@ -154,6 +194,5 @@ namespace bestdealpharma.com.Controllers.Api
     {
       return _context.Orders.Any(e => e.Id == id);
     }
-
   }
 }

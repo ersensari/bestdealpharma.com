@@ -3,7 +3,7 @@
     <v-card-title>
       <div class="headline">
         <v-icon large>ballot</v-icon>
-        Order Refill
+        Archived Orders
       </div>
     </v-card-title>
     <v-divider></v-divider>
@@ -38,41 +38,21 @@
                         :items="item.orderDetails"
                         hide-actions
                         class="elevation-0"
-                        v-model="selected"
                       >
                         <template slot="headers" slot-scope="props">
-                          <tr>
-                            <th>
-                              <v-checkbox
-                                :input-value="props.all"
-                                :indeterminate="props.indeterminate"
-                                primary
-                                hide-details
-                                @click.stop="toggleAll(item.orderDetails)"
-                              ></v-checkbox>
-                            </th>
-                            <th class="text-xs-left">Drug Name</th>
-                            <th>Quantity</th>
-                            <th>Strength</th>
-                            <th>Amount</th>
-                            <th class="text-xs-right">Price</th>
-                          </tr>
+                          <th class="text-xs-left">Drug Name</th>
+                          <th>Quantity</th>
+                          <th>Strength</th>
+                          <th>Amount</th>
+                          <th class="text-xs-right">Price</th>
                         </template>
                         <template slot="items" slot-scope="props">
-                          <tr :active="props.selected" @click="props.selected = !props.selected">
-                            <td>
-                              <v-checkbox
-                                :input-value="props.selected"
-                                primary
-                                hide-details
-                              ></v-checkbox>
-                            </td>
-                            <td class="text-xs-left">{{ props.item.title }}</td>
-                            <td class="text-xs-center">{{ props.item.quantity }}</td>
-                            <td class="text-xs-center">{{ props.item.strength }}</td>
-                            <td class="text-xs-center no-wrap">{{ props.item.amount }}</td>
-                            <td class="text-xs-right">{{props.item.price*props.item.amount | currency}}</td>
-                          </tr>
+                          <td class="text-xs-left">{{ props.item.title }}</td>
+                          <td class="text-xs-center">{{ props.item.quantity }}</td>
+                          <td class="text-xs-center">{{ props.item.strength }}</td>
+                          <td class="text-xs-center no-wrap">{{ props.item.amount }}</td>
+                          <td class="text-xs-right">{{props.item.price*props.item.amount | currency}}</td>
+
                         </template>
                       </v-data-table>
                     </v-card>
@@ -101,8 +81,11 @@
                             <h1 class="deep-orange--text">{{calculateSubTotal(item.orderDetails) + item.shipping |
                               currency}}</h1>
                           </v-flex>
+
                         </v-layout>
                       </v-container>
+
+
                     </v-card>
                   </v-flex>
                 </v-layout>
@@ -120,17 +103,13 @@
 
   export default {
     components: {},
-    data() {
-      return {
-        selected: [],
-      }
-    },
+
     computed: {
       ...mapGetters('user', ['getAuthenticatedUserName', 'isAuthenticated', 'authenticatedUser']),
       ...mapState({
         orders: state => {
           if (state.orders.all) {
-            return state.orders.all
+            return state.orders.all.filter(x => x.archived)
           } else
             return [];
         }
@@ -144,11 +123,7 @@
         return _.sumBy(cart, function (i) {
           return i.price * i.amount
         })
-      },
-      toggleAll(orderDetails) {
-        if (this.selected.length) this.selected = []
-        else this.selected = orderDetails.slice()
-      },
+      }
     }
   }
 </script>

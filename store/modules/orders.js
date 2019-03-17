@@ -160,6 +160,36 @@ const actions = {
           reject(e)
         })
     })
+  },
+  onCancel({commit}, id) {
+    return new Promise((resolve, reject) => {
+      window.axios({
+        method: 'post',
+        url: apiPath + 'cancelOrder/' + id
+      }).then(
+        response => {
+          this._vm.$toastr('info', 'The order has been canceled');
+          resolve(response)
+        }
+      ).catch(e => {
+        reject(e)
+      })
+    })
+  },
+  onArchived({commit}, id) {
+    return new Promise((resolve, reject) => {
+      window.axios({
+        method: 'post',
+        url: apiPath + 'archiveOrder/' + id
+      }).then(
+        response => {
+          this._vm.$toastr('info', 'The order has been moved to archive');
+          resolve(response)
+        }
+      ).catch(e => {
+        reject(e)
+      })
+    })
   }
 };
 
