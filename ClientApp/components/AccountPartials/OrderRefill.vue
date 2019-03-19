@@ -28,11 +28,9 @@
                   <v-flex xs12 py-2 pr-2>
                     <v-card class="elevation-0">
                       <v-card-text>
-                        <p v-if="item.shippingLink"><a :href="item.shippingLink" target="_blank">Trace Shipping</a></p>
-                        <v-icon>location_on</v-icon>
-                        {{item.addressLine}}, {{item.zipCode}}, {{item.city}}, {{item.state}}, {{item.country}}
-                        <v-icon>phone</v-icon>
-                        {{item.mobilePhone}}
+                        <blockquote class="blockquote">
+                          {{item.customerExplanation}}
+                        </blockquote>
                       </v-card-text>
                       <v-data-table
                         :items="item.orderDetails"
@@ -43,13 +41,7 @@
                         <template slot="headers" slot-scope="props">
                           <tr>
                             <th>
-                              <v-checkbox
-                                :input-value="props.all"
-                                :indeterminate="props.indeterminate"
-                                primary
-                                hide-details
-                                @click.stop="toggleAll(item.orderDetails)"
-                              ></v-checkbox>
+                              #
                             </th>
                             <th class="text-xs-left">Drug Name</th>
                             <th>Quantity</th>
@@ -61,11 +53,10 @@
                         <template slot="items" slot-scope="props">
                           <tr :active="props.selected" @click="props.selected = !props.selected">
                             <td>
-                              <v-checkbox
-                                :input-value="props.selected"
-                                primary
-                                hide-details
-                              ></v-checkbox>
+                              <v-btn icon small class="accent" title="Add To Cart"
+                                     @click="addToShoppingCart(props.item)">
+                                <v-icon small>add_shopping_cart</v-icon>
+                              </v-btn>
                             </td>
                             <td class="text-xs-left">{{ props.item.title }}</td>
                             <td class="text-xs-center">{{ props.item.quantity }}</td>
@@ -81,28 +72,69 @@
                     <v-card class="elevation-0">
                       <v-container fluid grid-list-md>
                         <v-layout row wrap>
-                          <v-flex xs4 md2 text-xs-right>
-                            <h3>Sub Total:</h3>
+                          <v-flex xs12 md6>
+                            <v-layout row wrap>
+                              <v-flex xs4 text-xs-right>
+                                <h3>Sub Total:</h3>
+                              </v-flex>
+                              <v-flex xs8>
+                                <h3>{{calculateSubTotal(item.orderDetails) | currency}}</h3>
+                              </v-flex>
+                              <v-flex xs4 text-xs-right>
+                                <h3>Shipping:</h3>
+                              </v-flex>
+                              <v-flex xs8>
+                                <h3>{{item.shipping | currency}}</h3>
+                              </v-flex>
+                              <v-flex xs4 text-xs-right>
+                                <h2>Total:</h2>
+                              </v-flex>
+                              <v-flex xs8>
+                                <h2 class="deep-orange--text">{{calculateSubTotal(item.orderDetails) + item.shipping
+                                  | currency}}</h2>
+                              </v-flex>
+                            </v-layout>
                           </v-flex>
-                          <v-flex xs8 md10>
-                            <h3>{{calculateSubTotal(item.orderDetails) | currency}}</h3>
+                          <v-flex xs12 md6>
+                            <v-list>
+                              <v-list-tile>
+                                <v-list-tile-avatar>
+                                  <v-icon>account_circle</v-icon>
+                                </v-list-tile-avatar>
+                                <h3>{{item.person.name}} {{item.person.surname}}</h3>
+                              </v-list-tile>
+                            </v-list>
+                            <v-list>
+                              <v-list-tile>
+                                <v-list-tile-avatar>
+                                  <v-icon>location_on</v-icon>
+                                </v-list-tile-avatar>
+                                {{item.addressLine}}, {{item.zipCode}}, {{item.city}}, {{item.state}},
+                                {{item.country}}
+                              </v-list-tile>
+                            </v-list>
+                            <v-list>
+                              <v-list-tile>
+                                <v-list-tile-avatar>
+                                  <v-icon>phonelink_ring</v-icon>
+                                </v-list-tile-avatar>
+                                {{item.mobilePhone}}
+                              </v-list-tile>
+                            </v-list>
+                            <v-list>
+                              <v-list-tile>
+                                <v-list-tile-avatar>
+                                  <v-icon>alternate_email</v-icon>
+                                </v-list-tile-avatar>
+                                {{item.person.user.email}}
+                              </v-list-tile>
+                            </v-list>
                           </v-flex>
 
-                          <v-flex xs4 md2 text-xs-right>
-                            <h3>Shipping:</h3>
-                          </v-flex>
-                          <v-flex xs8 md10>
-                            <h3>{{item.shipping | currency}}</h3>
-                          </v-flex>
-                          <v-flex xs4 md2 text-xs-right>
-                            <h1>Total:</h1>
-                          </v-flex>
-                          <v-flex xs8 md10>
-                            <h1 class="deep-orange--text">{{calculateSubTotal(item.orderDetails) + item.shipping |
-                              currency}}</h1>
-                          </v-flex>
                         </v-layout>
                       </v-container>
+
+
                     </v-card>
                   </v-flex>
                 </v-layout>
@@ -145,10 +177,18 @@
           return i.price * i.amount
         })
       },
-      toggleAll(orderDetails) {
-        if (this.selected.length) this.selected = []
-        else this.selected = orderDetails.slice()
-      },
+      addToShoppingCart: function (item) {
+        this.$store.dispatch('products/findById', item.id).then(res => {
+          if (res.data.id) {
+            window.getApp.$emit('APP_ADD_TO_CART', {
+              product: res.data,
+              amount: item.amount
+            })
+          }
+        }).catch(err => {
+          this.$toastr('error', 'This product is no longer available');
+        });
+      }
     }
   }
 </script>

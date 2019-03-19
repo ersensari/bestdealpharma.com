@@ -56,33 +56,35 @@
           </v-card-title>
 
           <v-flex class="xs12 sm12 md6 pa-3">
-            <v-text-field ref="currentPassword"
-                          v-model="model.currentPassword"
-                          :append-icon="showpwd1 ? 'visibility_off' : 'visibility'"
-                          :rules="[rules.required, rules.min]"
-                          :type="showpwd1 ? 'text' : 'password'"
-                          label="Current Password"
-                          hint="At least 6 characters"
-                          counter
-                          @click:append="showpwd1 = !showpwd1"></v-text-field>
-            <v-text-field ref="newPassword"
-                          v-model="model.newPassword"
-                          :append-icon="showpwd2 ? 'visibility_off' : 'visibility'"
-                          :rules="[rules.required, rules.min]"
-                          :type="showpwd2 ? 'text' : 'password'"
-                          label="New Password"
-                          hint="At least 6 characters"
-                          counter
-                          @click:append="showpwd2 = !showpwd2"></v-text-field>
-            <v-text-field ref="confirmpassword"
-                          v-model="model.confirmPassword"
-                          :append-icon="showpwd3 ? 'visibility_off' : 'visibility'"
-                          :rules="[rules.required, (v) => v == this.model.newPassword || 'The passwords you entered don\'t match']"
-                          :type="showpwd3 ? 'text' : 'password'"
-                          label="Confirm New Password"
-                          counter
-                          @click:append="showpwd3 = !showpwd3"></v-text-field>
-            <v-btn class="primary">Change Password</v-btn>
+            <v-form lazy-validation v-model="formIsValid" ref="changePasswordForm">
+              <v-text-field ref="currentPassword"
+                            v-model="model.currentPassword"
+                            :append-icon="showpwd1 ? 'visibility_off' : 'visibility'"
+                            :rules="[rules.required, rules.min]"
+                            :type="showpwd1 ? 'text' : 'password'"
+                            label="Current Password"
+                            hint="At least 6 characters"
+                            counter
+                            @click:append="showpwd1 = !showpwd1"></v-text-field>
+              <v-text-field ref="newPassword"
+                            v-model="model.newPassword"
+                            :append-icon="showpwd2 ? 'visibility_off' : 'visibility'"
+                            :rules="[rules.required, rules.min]"
+                            :type="showpwd2 ? 'text' : 'password'"
+                            label="New Password"
+                            hint="At least 6 characters"
+                            counter
+                            @click:append="showpwd2 = !showpwd2"></v-text-field>
+              <v-text-field ref="confirmpassword"
+                            v-model="model.confirmPassword"
+                            :append-icon="showpwd3 ? 'visibility_off' : 'visibility'"
+                            :rules="[rules.required, (v) => v == this.model.newPassword || 'The passwords you entered don\'t match']"
+                            :type="showpwd3 ? 'text' : 'password'"
+                            label="Confirm New Password"
+                            counter
+                            @click:append="showpwd3 = !showpwd3"></v-text-field>
+              <v-btn class="primary" @click="changePassword">Change Password</v-btn>
+            </v-form>
             <v-list color="error transparent" v-model="showChangePasswordError" transition="scale-transition">
               <v-list-tile v-for="err in errorMessages" :key="err.name">
                 <v-list-tile-action>
@@ -113,10 +115,12 @@
     data: () => ({
       showChangePasswordError: false,
       errorMessages: [],
+      formIsValid: false,
       model: {
         currentPassword: null,
-        newPasword: null,
-        confirmPassword: null
+        newPassword: null,
+        confirmPassword: null,
+        token: null
       },
       showpwd1: false,
       showpwd2: false,
@@ -135,7 +139,24 @@
             }
 
         }
-    })
+    }),
+    methods: {
+      changePassword: function () {
+        if (this.$refs.changePasswordForm.validate()) {
+
+          this.$store.dispatch('user/changePassword', this.model).then(res => {
+            this.$toastr('success', 'Your password has been changed!');
+
+          }).catch(err => {
+            if (err.response.data) {
+              this.$toastr('error', err.response.data[0].description);
+            } else {
+              this.$toastr('error', 'An error occurred! Please try again later.');
+            }
+          });
+        }
+      }
+    }
 
   }
 </script>

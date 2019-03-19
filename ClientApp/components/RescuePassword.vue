@@ -1,6 +1,6 @@
 <template>
   <v-flex>
- 
+
     <section>
       <v-container>
         <v-layout column
@@ -24,6 +24,10 @@
                 <v-alert type="error" dismissible v-model="showLoginError" transition="scale-transition">
                   Opps! Entered email address could not be verified!
                 </v-alert>
+                <v-alert type="success" dismissible v-model="showLoginSuccess" transition="scale-transition">
+                  Success! We has been sent a rescue link to your email. Check your email account.
+                </v-alert>
+
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -34,7 +38,7 @@
         </v-layout>
       </v-container>
     </section>
-  </v-flex> 
+  </v-flex>
 </template>
 <script>
   export default {
@@ -47,6 +51,7 @@
         }
       },
       showLoginError: false,
+      showLoginSuccess: false,
       loginFormIsValid: false,
       loginLoading: false,
       loginModel: {
@@ -64,10 +69,12 @@
             }
           }).then(
             (response) => {
+              this.showLoginSuccess = true;
+
               console.log(response.data.token)
             }
           ).catch(err => {
-            if (err.response.status === 401) {
+            if (err.response.status === 400) {
               this.showLoginError = true
             } else {
               console.log(err)

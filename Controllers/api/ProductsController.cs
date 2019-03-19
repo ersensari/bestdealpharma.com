@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 namespace bestdealpharma.com.Controllers.Api
 {
   [Produces("application/json")]
-  [Authorize(Roles = "Admin,Editor")]
   [ApiController]
   public class ProductsController : ControllerBase
   {
@@ -29,6 +28,7 @@ namespace bestdealpharma.com.Controllers.Api
     // GET: api/Products/5
     [HttpGet]
     [Route("api/Products/{id}")]
+    [Authorize(Roles = "Admin, Editor, Guest")]
     public async Task<IActionResult> GetProduct([FromRoute] int id)
     {
       if (id == -1) // isnew
@@ -49,6 +49,7 @@ namespace bestdealpharma.com.Controllers.Api
     // PUT: api/Products/5
     [HttpPut]
     [Route("api/Products/{id}")]
+    [Authorize(Roles = "Admin,Editor")]
     public async Task<IActionResult> PutProduct([FromRoute] int id, [FromBody] Product product)
     {
       if (!ModelState.IsValid)
@@ -85,6 +86,8 @@ namespace bestdealpharma.com.Controllers.Api
     // POST: api/Products
     [HttpPost]
     [Route("api/Products")]
+    [Authorize(Roles = "Admin,Editor")]
+
     public async Task<IActionResult> PostProduct([FromBody] Product product)
     {
       if (!ModelState.IsValid)
@@ -101,6 +104,8 @@ namespace bestdealpharma.com.Controllers.Api
     // DELETE: api/Products/5
     [HttpDelete]
     [Route("api/Products/{id}")]
+    [Authorize(Roles = "Admin,Editor")]
+
     public async Task<IActionResult> DeleteProduct([FromRoute] int id)
     {
       if (!ModelState.IsValid)
@@ -131,6 +136,7 @@ namespace bestdealpharma.com.Controllers.Api
 
       return Ok(await linq.ToListAsync());
     }
+
 
     private bool ProductExists(int id)
     {

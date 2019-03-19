@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using bestdealpharma.com.Helpers;
 
 namespace bestdealpharma.com
 {
@@ -25,7 +26,6 @@ namespace bestdealpharma.com
     {
       Configuration = configuration;
       _logger = logger;
-
     }
 
     public IConfiguration Configuration { get; }
@@ -87,6 +87,8 @@ namespace bestdealpharma.com
 
         return new Providers.AuthenticatedPersonProvider(datacontext, _httpContextAccessor);
       });
+
+      services.AddTransient<IEmailService, EmailService>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

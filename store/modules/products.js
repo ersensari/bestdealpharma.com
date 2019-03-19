@@ -80,6 +80,18 @@ const actions = {
         })
     })
   },
+  findById({commit}, id) {
+    return new Promise((resolve, reject) => {
+      window.axios
+        .get(apiPath + id)
+        .then(response => {
+          resolve(response)
+        })
+        .catch(e => {
+          reject(e)
+        })
+    })
+  },
 
   onSave({commit}, payload) {
     return new Promise((resolve, reject) => {

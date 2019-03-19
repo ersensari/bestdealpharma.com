@@ -28,11 +28,9 @@
                   <v-flex xs12 py-2 pr-2>
                     <v-card class="elevation-0">
                       <v-card-text>
-                        <p v-if="item.shippingLink"><a :href="item.shippingLink" target="_blank">Trace Shipping</a></p>
-                        <v-icon>location_on</v-icon>
-                        {{item.addressLine}}, {{item.zipCode}}, {{item.city}}, {{item.state}}, {{item.country}}
-                        <v-icon>phone</v-icon>
-                        {{item.mobilePhone}}
+                        <blockquote class="blockquote">
+                          {{item.customerExplanation}}
+                        </blockquote>
                       </v-card-text>
                       <v-data-table
                         :items="item.orderDetails"
@@ -61,25 +59,63 @@
                     <v-card class="elevation-0">
                       <v-container fluid grid-list-md>
                         <v-layout row wrap>
-                          <v-flex xs4 md2 text-xs-right>
-                            <h3>Sub Total:</h3>
+                          <v-flex xs12 md6>
+                            <v-layout row wrap>
+                              <v-flex xs4 text-xs-right>
+                                <h3>Sub Total:</h3>
+                              </v-flex>
+                              <v-flex xs8>
+                                <h3>{{calculateSubTotal(item.orderDetails) | currency}}</h3>
+                              </v-flex>
+                              <v-flex xs4 text-xs-right>
+                                <h3>Shipping:</h3>
+                              </v-flex>
+                              <v-flex xs8>
+                                <h3>{{item.shipping | currency}}</h3>
+                              </v-flex>
+                              <v-flex xs4 text-xs-right>
+                                <h2>Total:</h2>
+                              </v-flex>
+                              <v-flex xs8>
+                                <h2 class="deep-orange--text">{{calculateSubTotal(item.orderDetails) + item.shipping
+                                  | currency}}</h2>
+                              </v-flex>
+                            </v-layout>
                           </v-flex>
-                          <v-flex xs8 md10>
-                            <h3>{{calculateSubTotal(item.orderDetails) | currency}}</h3>
-                          </v-flex>
-
-                          <v-flex xs4 md2 text-xs-right>
-                            <h3>Shipping:</h3>
-                          </v-flex>
-                          <v-flex xs8 md10>
-                            <h3>{{item.shipping | currency}}</h3>
-                          </v-flex>
-                          <v-flex xs4 md2 text-xs-right>
-                            <h1>Total:</h1>
-                          </v-flex>
-                          <v-flex xs8 md10>
-                            <h1 class="deep-orange--text">{{calculateSubTotal(item.orderDetails) + item.shipping |
-                              currency}}</h1>
+                          <v-flex xs12 md6>
+                            <v-list>
+                              <v-list-tile>
+                                <v-list-tile-avatar>
+                                  <v-icon>account_circle</v-icon>
+                                </v-list-tile-avatar>
+                                <h3>{{item.person.name}} {{item.person.surname}}</h3>
+                              </v-list-tile>
+                            </v-list>
+                            <v-list>
+                              <v-list-tile>
+                                <v-list-tile-avatar>
+                                  <v-icon>location_on</v-icon>
+                                </v-list-tile-avatar>
+                                {{item.addressLine}}, {{item.zipCode}}, {{item.city}}, {{item.state}},
+                                {{item.country}}
+                              </v-list-tile>
+                            </v-list>
+                            <v-list>
+                              <v-list-tile>
+                                <v-list-tile-avatar>
+                                  <v-icon>phonelink_ring</v-icon>
+                                </v-list-tile-avatar>
+                                {{item.mobilePhone}}
+                              </v-list-tile>
+                            </v-list>
+                            <v-list>
+                              <v-list-tile>
+                                <v-list-tile-avatar>
+                                  <v-icon>alternate_email</v-icon>
+                                </v-list-tile-avatar>
+                                {{item.person.user.email}}
+                              </v-list-tile>
+                            </v-list>
                           </v-flex>
 
                         </v-layout>

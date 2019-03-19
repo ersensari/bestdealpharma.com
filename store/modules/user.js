@@ -1,4 +1,3 @@
-
 const baseApiUri = '/api/Authorization/';
 
 const state = {
@@ -132,6 +131,27 @@ const actions = {
           console.error(e);
         })
     }
+  },
+  changePassword({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      payload.token = window.localStorage.getItem('token');
+      if (payload.token) {
+        window
+          .axios({
+            method: 'post',
+            url: '/Account/ChangePassword',
+            data: payload
+          })
+          .then(response => {
+            resolve(response)
+          })
+          .catch(e => {
+            reject(e)
+          })
+      } else {
+        reject()
+      }
+    });
   }
 };
 
