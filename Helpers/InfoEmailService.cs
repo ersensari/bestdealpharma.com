@@ -5,11 +5,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace bestdealpharma.com.Helpers
 {
-  public class EmailService : IEmailService
+  public class InfoEmailService : IEmailService
   {
     private readonly IConfiguration _configuration;
 
-    public EmailService(IConfiguration configuration)
+    public InfoEmailService(IConfiguration configuration)
     {
       _configuration = configuration;
     }
@@ -20,21 +20,22 @@ namespace bestdealpharma.com.Helpers
       {
         var credential = new NetworkCredential
         {
-          UserName = _configuration["Email:Email"],
-          Password = _configuration["Email:Password"]
+          UserName = _configuration["InfoEmail:Email"],
+          Password = _configuration["InfoEmail:Password"]
         };
 
         client.Credentials = credential;
-        client.Host = _configuration["Email:Host"];
-        client.Port = int.Parse(_configuration["Email:Port"]);
+        client.Host = _configuration["InfoEmail:Host"];
+        client.Port = int.Parse(_configuration["InfoEmail:Port"]);
         client.EnableSsl = true;
 
         using (var emailMessage = new MailMessage())
         {
           emailMessage.To.Add(new MailAddress(email));
-          emailMessage.From = new MailAddress(_configuration["Email:Email"]);
+          emailMessage.From = new MailAddress(_configuration["InfoEmail:Email"]);
           emailMessage.Subject = subject;
           emailMessage.Body = message;
+          emailMessage.IsBodyHtml = true;
           client.Send(emailMessage);
         }
       }

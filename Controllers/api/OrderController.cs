@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using bestdealpharma.com.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace bestdealpharma.com.Controllers.Api
 {
@@ -21,13 +23,15 @@ namespace bestdealpharma.com.Controllers.Api
     private readonly Data.DbContext _context;
     private readonly IHostingEnvironment _hostingEnvironment;
     private readonly Providers.IAuthenticatedPersonProvider _authPerson;
+    private readonly IEmailService _emailService;
 
     public OrderController(Data.DbContext context, IHostingEnvironment hostingEnvironment,
-      Providers.IAuthenticatedPersonProvider authPerson)
+      Providers.IAuthenticatedPersonProvider authPerson, IEmailService emailService)
     {
       _context = context;
       _hostingEnvironment = hostingEnvironment;
       _authPerson = authPerson;
+      _emailService = emailService;
     }
 
     [HttpPost]
@@ -75,6 +79,8 @@ namespace bestdealpharma.com.Controllers.Api
     {
       if (ModelState.IsValid)
       {
+        var authMember = _authPerson.GetAuthenticatedUser(string.Empty);
+
         foreach (var item in order.OrderDetails)
         {
           item.Id = 0;
@@ -82,6 +88,12 @@ namespace bestdealpharma.com.Controllers.Api
 
         await _context.Orders.AddAsync(order);
         await _context.SaveChangesAsync();
+        string bodyHtml = CreateOrderMailBodyHtml(order);
+        await _emailService.SendEmail(authMember.User.Email,
+          $"bestdealpharma.com - Your order has been created #{order.OrderNumber}", bodyHtml);
+
+        await _emailService.SendEmail("info@bestdealpharma.com",
+          $"bestdealpharma.com - the order has been created #{order.OrderNumber}", bodyHtml);
       }
       else
       {
@@ -189,6 +201,73 @@ namespace bestdealpharma.com.Controllers.Api
       return Ok(order);
     }
 
+    private string CreateOrderMailBodyHtml(Order order)
+    {
+      StringBuilder bodyHtml = new StringBuilder();
+      bodyHtml.AppendLine(
+        @"table { border-collapse: collapse; }
+            table, th, td { border: 1px solid black; }");
+      bodyHtml.AppendLine("<h3>Thank you for choosing BestDealPharma.com</h3>");
+      if (order.Status == 2 && !string.IsNullOrWhiteSpace(order.ShippingLink))
+      {
+        bodyHtml.AppendLine($"<h4><a href='{order.ShippingLink}' target='_blank'>Trace your shipping</a></h4>");
+      }
+
+      string statusText = "";
+      switch (order.Status)
+      {
+        case 0:
+          statusText = "Waiting Payment";
+          break;
+        case 1:
+          statusText = "Preparing";
+          break;
+        case 2:
+          statusText = "Shipped";
+          break;
+        case 3:
+          statusText = "Canceled";
+          break;
+        default:
+          statusText = "";
+          break;
+      }
+
+      bodyHtml.AppendLine("<table>" +
+                          $"<tr><th>Order Status</th><td>{statusText}</td></tr>" +
+                          $"<tr><th>Customer Name</th><td>{order.Person.Name} {order.Person.Surname}</td></tr>" +
+                          $"<tr><th>Shipping Address</th><td>{order.AddressLine}, {order.ZipCode}, {order.City}, {order.State},{order.Country}</td></tr>" +
+                          $"<tr><th>Phone Number</th><td>{order.MobilePhone}</td></tr>" +
+                          $"<tr><th>Order Number</th><td>{order.OrderNumber}</td></tr>" +
+                          $"<tr><th>Order Date</th><td>{order.OrderDate.ToShortDateString()}</td></tr>" +
+                          $"<tr><th>Sub Total</th><td>${order.SubTotal}</td></tr>" +
+                          $"<tr><th>Shipping</th><td>${order.Shipping}</td></tr>" +
+                          $"<tr><th>Total</th><td>${order.Total}</td></tr>" +
+                          "</table>");
+
+      bodyHtml.AppendLine("<h4>Order Detail</h4><table>" +
+                          $"<tr><th>Drug Name</th>" +
+                          $"<th>Quantity</th>" +
+                          $"<th>Strength</th>" +
+                          $"<th>Amount</th>" +
+                          $"<th>Price</th></tr>");
+
+      foreach (var item in order.OrderDetails)
+      {
+        bodyHtml.AppendLine("<tr>" +
+                            $"<td>{item.Title}</td>" +
+                            $"<td>{item.Quantity}</td>" +
+                            $"<td>{item.Strength}</td>" +
+                            $"<td>{item.Amount}</td>" +
+                            $"<td>${item.Price}</td>" +
+                            "</tr>");
+      }
+
+      bodyHtml.AppendLine("</html>");
+
+
+      return bodyHtml.ToString();
+    }
 
     private bool OrderExists(int id)
     {

@@ -88,7 +88,7 @@ namespace bestdealpharma.com
         return new Providers.AuthenticatedPersonProvider(datacontext, _httpContextAccessor);
       });
 
-      services.AddTransient<IEmailService, EmailService>();
+      services.AddTransient<IEmailService, InfoEmailService>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

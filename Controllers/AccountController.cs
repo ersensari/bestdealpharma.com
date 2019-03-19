@@ -177,6 +177,8 @@ namespace bestdealpharma.com.Controllers
           var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
           if (result.Succeeded)
           {
+            await _emailService.SendEmail(user.Email,  "bestdealpharma.com Change Password", "Your password has been changed successful");
+
             return Ok();
           }
           else
