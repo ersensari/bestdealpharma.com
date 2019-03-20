@@ -1,13 +1,13 @@
 /* eslint eqeqeq: "error" */
 
-const apiPath = 'api/pages/'
+const apiPath = 'api/pages/';
 
 const state = {
   all: [],
   errors: []
-}
+};
 
-const getters = {}
+const getters = {};
 
 const mutations = {
   setItems (state, items) {
@@ -17,21 +17,21 @@ const mutations = {
     this._vm.$toastr('success', 'Update Process Completed')
   },
   addItem (state, item) {
-    this._vm.$toastr('success', 'Save Process Completed')
+    this._vm.$toastr('success', 'Save Process Completed');
     state.all.push(item)
   },
   removeItem (state, payload) {
-    state.all.splice(state.all.findIndex(x => x.id === payload.id), 1)
+    state.all.splice(state.all.findIndex(x => x.id === payload.id), 1);
     this._vm.$toastr('success', 'Delete Process Completed')
   },
   setErrors (state, error) {
-    state.errors.push(error)
+    state.errors.push(error);
     if (state.errors.length > 0) {
-      this._vm.$toastr('error', 'Unexpected error occurred while processing')
+      this._vm.$toastr('error', 'Unexpected error occurred while processing');
       console.error(error)
     }
   }
-}
+};
 
 // Actions
 const actions = {
@@ -40,11 +40,11 @@ const actions = {
       window.axios
         .get(apiPath)
         .then(response => {
-          commit('setItems', response.data)
+          commit('setItems', response.data);
           resolve(response)
         })
         .catch(e => {
-          commit('setErrors', e)
+          commit('setErrors', e);
           reject(e)
         })
     })
@@ -60,11 +60,11 @@ const actions = {
             data: payload
           })
           .then(response => {
-            commit('addItem', response.data)
+            commit('addItem', response.data);
             resolve(response)
           })
           .catch(e => {
-            commit('setErrors', e)
+            commit('setErrors', e);
             reject(e)
           })
       } else {
@@ -75,11 +75,11 @@ const actions = {
             data: payload
           })
           .then(response => {
-            commit('updateItem', response.data)
+            commit('updateItem', response.data);
             resolve(response)
           })
           .catch(e => {
-            commit('setErrors', e)
+            commit('setErrors', e);
             reject(e)
           })
       }
@@ -91,11 +91,11 @@ const actions = {
       window.axios
         .get(apiPath + '-1')
         .then(response => {
-          this._vm.$toastr('info', 'New Record Created')
+          this._vm.$toastr('info', 'New Record Created');
           resolve(response)
         })
         .catch(e => {
-          commit('setErrors', e)
+          commit('setErrors', e);
           reject(e)
         })
     })
@@ -106,16 +106,16 @@ const actions = {
       window.axios
         .delete(apiPath + id)
         .then(response => {
-          commit('removeItem', response.data)
+          commit('removeItem', response.data);
           resolve(response)
         })
         .catch(e => {
-          commit('setErrors', e)
+          commit('setErrors', e);
           reject(e)
         })
     })
   }
-}
+};
 
 export default {
   namespaced: true,

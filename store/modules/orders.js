@@ -168,7 +168,6 @@ const actions = {
         url: apiPath + 'cancelOrder/' + id
       }).then(
         response => {
-          this._vm.$toastr('info', 'The order has been canceled');
           resolve(response)
         }
       ).catch(e => {

@@ -179,6 +179,7 @@
                 return x.id === id
               });
               order.status = 3;
+              this._vm.$toastr('info', 'The order has been canceled');
             }).catch(e => {
               console.error(e)
             })
