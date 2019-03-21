@@ -152,6 +152,26 @@ const actions = {
         reject()
       }
     });
+  },
+  createNewPassword({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      if (payload.token) {
+        window
+          .axios({
+            method: 'post',
+            url: '/Account/CreateNewPassword',
+            data: payload
+          })
+          .then(response => {
+            resolve(response)
+          })
+          .catch(e => {
+            reject(e)
+          })
+      } else {
+        reject()
+      }
+    });
   }
 };
 

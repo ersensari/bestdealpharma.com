@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -109,9 +110,11 @@ namespace bestdealpharma.com.Controllers
       var user = await _userManager.FindByEmailAsync(model.Email);
       if (user != null)
       {
-        var token = GenerateJsonWebToken(user);
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-        await _emailService.SendEmail(user.Email,  "bestdealpharma.com Password Rescue", "<a href='http://www.bestdealpharma.com/rescue-password/" + token + "'>Create New Password</a>");
+        await _emailService.SendEmail(user.Email, "bestdealpharma.com Password Recovery",
+          "<a href='http://www.bestdealpharma.com/rescue-password?token=" + WebUtility.UrlEncode(token) +
+          "'>Create New Password</a>");
 
 
         return Ok(new
@@ -131,23 +134,30 @@ namespace bestdealpharma.com.Controllers
       }
     }
 
-    [HttpGet]
+    [HttpPost]
     [AllowAnonymous]
-    public async Task<IActionResult> CreateNewPassword(string token)
+    public async Task<IActionResult> CreateNewPassword([FromBody] RecoveryPasswordModel model)
     {
-      var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-
-      if (jwt.ValidTo <= DateTime.Now && jwt.Issuer == _configuration["Jwt:Issuer"])
+      var user = await _userManager.FindByEmailAsync(model.Email);
+      if (user != null
+//          && await _userManager.VerifyUserTokenAsync(user,
+//            _userManager.Options.Tokens.PasswordResetTokenProvider,
+//            "ResetPassword",
+//            model.Token
+//          )
+      )
       {
-        var email = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email).Value;
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user != null)
+        var result = await _userManager.ResetPasswordAsync(user, WebUtility.UrlDecode(model.Token), model.NewPassword);
+        if (result.Succeeded)
         {
+          await _emailService.SendEmail(user.Email, "bestdealpharma.com Change Password",
+            "Your password has been changed successful");
+
           return Ok();
         }
         else
         {
-          return BadRequest();
+          return BadRequest(result.Errors);
         }
       }
       else
@@ -155,6 +165,7 @@ namespace bestdealpharma.com.Controllers
         return BadRequest();
       }
     }
+
 
     [HttpPost]
     [Authorize]
@@ -177,7 +188,8 @@ namespace bestdealpharma.com.Controllers
           var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
           if (result.Succeeded)
           {
-            await _emailService.SendEmail(user.Email,  "bestdealpharma.com Change Password", "Your password has been changed successful");
+            await _emailService.SendEmail(user.Email, "bestdealpharma.com Change Password",
+              "Your password has been changed successful");
 
             return Ok();
           }
@@ -308,6 +320,14 @@ namespace bestdealpharma.com.Controllers
     public class UserChangePasswordModel
     {
       [Required] public string CurrentPassword { get; set; }
+      [Required] public string NewPassword { get; set; }
+      [Required] public string ConfirmPassword { get; set; }
+      [Required] public string Token { get; set; }
+    }
+
+    public class RecoveryPasswordModel
+    {
+      [Required] public string Email { get; set; }
       [Required] public string NewPassword { get; set; }
       [Required] public string ConfirmPassword { get; set; }
       [Required] public string Token { get; set; }
