@@ -252,11 +252,20 @@
                       augue ullamcorper viverra.
                     </p>
                   </v-flex>
-                  <v-flex text-xs-center xs12 mt-5>
-                    <v-btn class="transparent" flat @click="createOrder">
-                      <v-img src="/images/paypal.png" width="150" class="pa-0"></v-img>
-                    </v-btn>
+                  <v-flex text-xs-center xs12 mt-5 v-if="!orderCompleting">
+                    <pay-pal
+                      :amount="calculateTotal()"
+                      currency="USD"
+                      locale="en_US"
+                      :client="paypal"
+                      :button-style="aStyle"
+                      v-on:payment-completed="createOrder(1)"
+                      env="sandbox">
+                    </pay-pal>
 
+                  </v-flex>
+                  <v-flex text-xs-center xs12 mt-5 class="deep-orange--text" v-else>
+                    <h3>Order completing please wait...</h3>
                   </v-flex>
                 </v-layout>
               </v-card>
@@ -302,33 +311,35 @@
         </v-flex>
       </v-layout>
     </v-container>
-
-    <v-dialog
-      v-model="paypalDialog"
-      fullscreen
-      hide-overlay
-      transition="dialog-bottom-transition"
-      scrollable
-    >
-      <div style="flex: 1 1 auto;">{{paypalDiaglogBody}}</div>
-    </v-dialog>
   </v-card>
 </template>
 
 <script>
+
   import {mapGetters, mapState} from "vuex";
   import FileUpload from 'v-file-upload'
   import moment from 'moment'
+  import PayPal from 'vue-paypal-checkout'
 
   export default {
     components: {
-      'file-upload': FileUpload
+      'file-upload': FileUpload,
+      'pay-pal': PayPal
     },
 
     data: () => ({
+      aStyle: {
+        label: 'pay',
+        size: 'large',
+        shape: 'rect',
+        color: 'blue',
+      },
+      paypal: {
+        sandbox: 'ATyC7QwwTes-xkqtDC5_Bsue03B0YCqaDyChGB7YWq_Z-H_fdmY-7sJ-52F-5wAI-WRZZqz2ayW6HDr-',
+        production: 'todo:alinacak'
+      },
+      orderCompleting: false,
       e1: 0,
-      paypalDialog: false,
-      paypalDiaglogBody: '',
       countries: ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Antigua &amp; Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia Herzegovina', 'Botswana', 'Brazil', 'British Virgin Islands', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Cape Verde', 'Cayman Islands', 'Chad', 'Chile', 'China', 'Colombia', 'Congo', 'Cook Islands', 'Costa Rica', 'Cote D Ivoire', 'Croatia', 'Cruise Ship', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Estonia', 'Ethiopia', 'Falkland Islands', 'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Polynesia', 'French West Indies', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guam', 'Guatemala', 'Guernsey', 'Guinea', 'Guinea Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Isle of Man', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan', 'Kenya', 'Kuwait', 'Kyrgyz Republic', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Macau', 'Macedonia', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Mauritania', 'Mauritius', 'Mexico', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco', 'Mozambique', 'Namibia', 'Nepal', 'Netherlands', 'Netherlands Antilles', 'New Caledonia', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Norway', 'Oman', 'Pakistan', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Reunion', 'Romania', 'Russia', 'Rwanda', 'Saint Pierre &amp; Miquelon', 'Samoa', 'San Marino', 'Satellite', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'South Africa', 'South Korea', 'Spain', 'Sri Lanka', 'St Kitts &amp; Nevis', 'St Lucia', 'St Vincent', 'St. Lucia', 'Sudan', 'Suriname', 'Swaziland', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', "Timor L'Este", 'Togo', 'Tonga', 'Trinidad &amp; Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Turks &amp; Caicos', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Venezuela', 'Vietnam', 'Virgin Islands (US)', 'Yemen', 'Zambia', 'Zimbabwe'],
       addressModel: {
         id: 0,
@@ -393,6 +404,10 @@
           return i.product.price * i.amount
         })
       },
+      calculateTotal() {
+        const subTotal = this.calculateSubTotal();
+        return (subTotal + this.shippingPrice).toString();
+      },
       saveAddress() {
         if (this.$refs.addressForm.validate()) {
           this.selectedAddress = null;
@@ -411,7 +426,8 @@
           }
         })
       },
-      createOrder() {
+      createOrder(status) {
+        this.orderCompleting = true;
         const model = {
           id: 0,
           orderNumber: moment().valueOf().toString(),
@@ -431,7 +447,7 @@
           total: _.sumBy(this.cart, function (i) {
             return i.product.price * i.amount
           }) + this.shippingMethod.price,
-          status: 0,
+          status: status,
           orderDetails: this.cart.map(x => {
             return {
               id: 0,
@@ -450,33 +466,28 @@
           personId: this.authenticatedUser.person.id,
           prescriptionId: this.selectedPrescription
         };
+
         this.$store.dispatch('orders/createOrder', model).then(response => {
           this.orderFinished = true;
           window.getApp.$emit('APP_CLEAR_CART');
-          const paypallnk = "https://www.paypal.com/cgi-bin/webscr?cmd=_ext-enter&redirect_cmd=_xclick&first_name="
-            + this.authenticatedUser.person.name
-            + "&last_name="
-            + this.authenticatedUser.surname
-            + "&business=accounting@amerikadanhemenal.com&amount="
-            + model.total
-            + "&currency_code=USD&item_name=Odeme&item_number="
-            + model.orderNumber
-            + "&quantity="
-            + this.cart.length
-            + "&item_name=Payment for bestdealpharma.com #" + model.orderNumber
-            + "&shipping="
-            + model.shipping
-            + "&no_shipping=0&pbtype=product";
+        });
 
-          fetch(paypallnk)
-            .then(res => {
-              return res.text();
-            })
-            .then(data => {
-              this.paypalDiaglogBody = data;
-              this.paypalDialog = true;
-            });
-        })
+        // const paypallnk = "https://www.paypal.com/cgi-bin/webscr?cmd=_ext-enter&redirect_cmd=_xclick&first_name="
+        //   + this.authenticatedUser.person.name
+        //   + "&last_name="
+        //   + this.authenticatedUser.surname
+        //   + "&business=accounting@amerikadanhemenal.com&amount="
+        //   + model.total
+        //   + "&currency_code=USD&item_name=Odeme&item_number="
+        //   + model.orderNumber
+        //   + "&quantity="
+        //   + this.cart.length
+        //   + "&item_name=Payment for bestdealpharma.com #" + model.orderNumber
+        //   + "&shipping="
+        //   + model.shipping
+        //   + "&no_shipping=0&pbtype=product";
+
+
       }
     }
   }
