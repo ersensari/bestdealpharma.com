@@ -104,7 +104,7 @@
       showpwd3: false,
       formIsValid: false,
       model: {
-        email:null,
+        email: null,
         newPassword: null,
         confirmPassword: null,
         token: null
@@ -138,7 +138,7 @@
 
           this.$store.dispatch('user/createNewPassword', this.model).then(res => {
             this.$toastr('success', 'Your password has been changed!');
-
+            this.$router.push("login");
           }).catch(err => {
             if (err.response.data) {
               this.$toastr('error', err.response.data[0].description);
@@ -150,7 +150,8 @@
       }
     },
     created() {
-      this.model.token = this.$route.query.token;
+      if (this.$route.query.token)
+        this.model.token = encodeURIComponent(this.$route.query.token);
     }
   }
 </script>

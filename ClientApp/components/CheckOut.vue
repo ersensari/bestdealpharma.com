@@ -72,7 +72,7 @@
 
           <v-stepper-items>
             <v-stepper-content step="1">
-              <v-card class="mb-5">
+              <v-card class="mb-5 elevation-0">
                 <v-subheader>Select a shipping address from your address book or enter a
                   <v-dialog v-model="dialog" persistent max-width="600px">
                     <v-btn slot="activator" color="secondary" small flat>new address</v-btn>
@@ -206,7 +206,7 @@
             </v-stepper-content>
 
             <v-stepper-content step="2">
-              <v-card class="mb-5">
+              <v-card class="mb-5 elevation-0">
                 <h3>Please upload your prescription file.</h3>
                 <v-alert type="success" v-model="fileUploadSuccess">Upload successful.</v-alert>
                 <file-upload url='/api/Order/upload' @success="onFileUploadSucess"></file-upload>
@@ -235,32 +235,30 @@
 
             <v-stepper-content step="3">
               <v-card
-                class="mb-5"
-                dark
-                color="secondary lighten-1"
-                height="200px"
+                class="mb-5 elevation-0"
               >
-                <v-container fluid fill-height>
-                  <v-layout
-                    justify-center
-                    align-center
-                    fill-height
-                  >
-                    <v-flex text-xs-center>
-                      <div class="display-1">Thank you for choosing us!</div>
-                      <v-textarea v-model="customerExplanation" label="Order Explanation"></v-textarea>
-                      <v-subheader>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ullamcorper vel diam eu vulputate.
-                        Aliquam vestibulum felis sit amet tincidunt consectetur. Aenean tristique nulla at nisl mattis
-                        varius. Vivamus tempus dui vitae libero rhoncus, vel cursus quam congue. Nam mattis neque et
-                        augue ullamcorper viverra.
-                      </v-subheader>
-                      <v-btn large depressed class="deep-orange" dark @click="createOrder">
-                        <img src="/images/paypal.png"></img>
-                      </v-btn>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
+                <v-layout
+                  class="grid-list-md wrap"
+                >
+                  <v-flex text-center-xs xs12>
+                    <div class="display-1">Thank you for choosing us!</div>
+                    <v-textarea v-model="customerExplanation" label="Order Explanation"></v-textarea>
+                  </v-flex>
+                  <v-flex text-xs-center xs12>
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ullamcorper vel diam eu vulputate.
+                      Aliquam vestibulum felis sit amet tincidunt consectetur. Aenean tristique nulla at nisl mattis
+                      varius. Vivamus tempus dui vitae libero rhoncus, vel cursus quam congue. Nam mattis neque et
+                      augue ullamcorper viverra.
+                    </p>
+                  </v-flex>
+                  <v-flex text-xs-center xs12 mt-5>
+                    <v-btn class="transparent" flat @click="createOrder">
+                      <v-img src="/images/paypal.png" width="150" class="pa-0"></v-img>
+                    </v-btn>
+
+                  </v-flex>
+                </v-layout>
               </v-card>
             </v-stepper-content>
 
@@ -305,6 +303,15 @@
       </v-layout>
     </v-container>
 
+    <v-dialog
+      v-model="paypalDialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+      scrollable
+    >
+      <div style="flex: 1 1 auto;">{{paypalDiaglogBody}}</div>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -320,6 +327,8 @@
 
     data: () => ({
       e1: 0,
+      paypalDialog: false,
+      paypalDiaglogBody: '',
       countries: ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Antigua &amp; Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia Herzegovina', 'Botswana', 'Brazil', 'British Virgin Islands', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Cape Verde', 'Cayman Islands', 'Chad', 'Chile', 'China', 'Colombia', 'Congo', 'Cook Islands', 'Costa Rica', 'Cote D Ivoire', 'Croatia', 'Cruise Ship', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Estonia', 'Ethiopia', 'Falkland Islands', 'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Polynesia', 'French West Indies', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guam', 'Guatemala', 'Guernsey', 'Guinea', 'Guinea Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Isle of Man', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan', 'Kenya', 'Kuwait', 'Kyrgyz Republic', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Macau', 'Macedonia', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Mauritania', 'Mauritius', 'Mexico', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco', 'Mozambique', 'Namibia', 'Nepal', 'Netherlands', 'Netherlands Antilles', 'New Caledonia', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Norway', 'Oman', 'Pakistan', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Reunion', 'Romania', 'Russia', 'Rwanda', 'Saint Pierre &amp; Miquelon', 'Samoa', 'San Marino', 'Satellite', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'South Africa', 'South Korea', 'Spain', 'Sri Lanka', 'St Kitts &amp; Nevis', 'St Lucia', 'St Vincent', 'St. Lucia', 'Sudan', 'Suriname', 'Swaziland', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', "Timor L'Este", 'Togo', 'Tonga', 'Trinidad &amp; Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Turks &amp; Caicos', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Venezuela', 'Vietnam', 'Virgin Islands (US)', 'Yemen', 'Zambia', 'Zimbabwe'],
       addressModel: {
         id: 0,
@@ -458,7 +467,15 @@
             + "&shipping="
             + model.shipping
             + "&no_shipping=0&pbtype=product";
-          window.open(paypallnk);
+
+          fetch(paypallnk)
+            .then(res => {
+              return res.text();
+            })
+            .then(data => {
+              this.paypalDiaglogBody = data;
+              this.paypalDialog = true;
+            });
         })
       }
     }

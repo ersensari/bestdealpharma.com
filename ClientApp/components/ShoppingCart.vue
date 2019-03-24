@@ -107,13 +107,15 @@
     },
     computed: {
       ...mapState({
-        shippingItems: state => state.shippings.all
+        shippingItems: state => state.shippings.all,
       })
     },
 
     created() {
       this.cart = window.getApp.cart;
-      this.$store.dispatch('shippings/getAll')
+      this.$store.dispatch('shippings/getAll').then(res => {
+        this.shipping = res.data[0]
+      });
 
     },
     methods: {

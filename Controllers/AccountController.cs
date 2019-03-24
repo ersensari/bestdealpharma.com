@@ -113,8 +113,7 @@ namespace bestdealpharma.com.Controllers
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
         await _emailService.SendEmail(user.Email, "bestdealpharma.com Password Recovery",
-          "<a href='http://www.bestdealpharma.com/rescue-password?token=" + WebUtility.UrlEncode(token) +
-          "'>Create New Password</a>");
+          $"<a href='{_configuration["Jwt:Issuer"]}/rescue-password?token={WebUtility.UrlEncode(token)}'>Create New Password</a>");
 
 
         return Ok(new
@@ -139,13 +138,7 @@ namespace bestdealpharma.com.Controllers
     public async Task<IActionResult> CreateNewPassword([FromBody] RecoveryPasswordModel model)
     {
       var user = await _userManager.FindByEmailAsync(model.Email);
-      if (user != null
-//          && await _userManager.VerifyUserTokenAsync(user,
-//            _userManager.Options.Tokens.PasswordResetTokenProvider,
-//            "ResetPassword",
-//            model.Token
-//          )
-      )
+      if (user != null)
       {
         var result = await _userManager.ResetPasswordAsync(user, WebUtility.UrlDecode(model.Token), model.NewPassword);
         if (result.Succeeded)
@@ -181,7 +174,7 @@ namespace bestdealpharma.com.Controllers
 
       if (jwt.ValidTo <= DateTime.Now && jwt.Issuer == _configuration["Jwt:Issuer"])
       {
-        var email = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email).Value;
+        var email = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value;
         var user = await _userManager.FindByEmailAsync(email);
         if (user != null)
         {

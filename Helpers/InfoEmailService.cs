@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace bestdealpharma.com.Helpers
         client.Host = _configuration["InfoEmail:Host"];
         client.Port = int.Parse(_configuration["InfoEmail:Port"]);
         client.EnableSsl = true;
-
+        client.Timeout = 10000;
         using (var emailMessage = new MailMessage())
         {
           emailMessage.To.Add(new MailAddress(email));
@@ -36,7 +37,15 @@ namespace bestdealpharma.com.Helpers
           emailMessage.Subject = subject;
           emailMessage.Body = message;
           emailMessage.IsBodyHtml = true;
-          client.Send(emailMessage);
+          try
+          {
+            client.Send(emailMessage);
+          }
+          catch (Exception e)
+          {
+            Console.WriteLine(e);
+            throw e;
+          }
         }
       }
 
